@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "jiti": "^1.19.3",
+    "tailwindcss": "^3.3.3"
+  },
+  "devDependencies": {
+    "daisyui": "^3.6.3"
+  }
+}
