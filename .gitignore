@@ -18,3 +18,4 @@ build
 dist
 pkg
 .cache
+.env
