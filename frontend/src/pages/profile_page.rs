@@ -1,26 +1,26 @@
-use std::cell::RefCell;
-use std::ops::Deref;
-use std::rc::Rc;
-use gloo::console::console;
-use serde::{Deserialize, Serialize};
-use serde_json::json;
-use validator::{Validate, ValidationErrors};
-use wasm_bindgen_futures::spawn_local;
-use web_sys::HtmlInputElement;
-use yew::html::IntoPropValue;
+use crate::api::user_api::api_update_user;
+use crate::components::{form_input::FormInput, loading_button::LoadingButton};
+use crate::ui_helpers::UiHelpers;
 use crate::{
     api::user_api::api_user_info,
     components::header::Header,
     router,
     store::{set_auth_user, set_page_loading, set_show_alert, Store},
 };
+use common::model::user::UserUpdateData;
+use gloo::console::console;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
+use validator::{Validate, ValidationErrors};
+use wasm_bindgen_futures::spawn_local;
+use web_sys::HtmlInputElement;
+use yew::html::IntoPropValue;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
-use common::model::user::UserUpdateData;
-use crate::api::user_api::api_update_user;
-use crate::components::{form_input::FormInput, loading_button::LoadingButton};
-use crate::ui_helpers::UiHelpers;
 
 #[derive(Validate, Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 struct UpdateUserSchema {
@@ -101,18 +101,10 @@ pub fn profile_page() -> Html {
                                 set_page_loading(false, &dispatch);
                                 if let Ok(user) = api_user_info().await {
                                     set_auth_user(Some(user), &dispatch);
-                                    set_show_alert(
-                                        "Profile Updated".to_string(),
-                                        &dispatch,
-                                    );
+                                    set_show_alert("Profile Updated".to_string(), &dispatch);
                                 } else {
-                                    set_show_alert(
-                                        "Failed Profile Updated".to_string(),
-                                        &dispatch,
-                                    );
+                                    set_show_alert("Failed Profile Updated".to_string(), &dispatch);
                                 }
-
-
                             }
                             Err(e) => {
                                 set_page_loading(false, &dispatch);
@@ -126,7 +118,6 @@ pub fn profile_page() -> Html {
                 }
             });
         })
-
     };
 
     // Fetch User's profile from backend API.
@@ -149,7 +140,7 @@ pub fn profile_page() -> Html {
                                 role: user.role.to_owned(),
                                 name: user.name.clone(),
                                 verified: user.verified,
-                                tmdb_api_key: user.tmdb_api_key.unwrap_or_else(|| String::new())
+                                tmdb_api_key: user.tmdb_api_key.unwrap_or_else(|| String::new()),
                             });
                         }
                         Err(e) => {
@@ -162,7 +153,8 @@ pub fn profile_page() -> Html {
                     }
                 });
                 || ()
-            }, ()
+            },
+            (),
         );
     }
 

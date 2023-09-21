@@ -1,9 +1,10 @@
+use crate::api::API_ROOT;
+use common::model::user::{
+    ErrorResponse, User, UserLoginResponse, UserResponse, UserUpdateData, UserUpdateResponse,
+};
 use gloo::console::console;
 use reqwasm::http;
 use serde_json::json;
-use common::model::user::{ErrorResponse, User, UserLoginResponse, UserResponse, UserUpdateData, UserUpdateResponse};
-use crate::api::API_ROOT;
-
 
 pub async fn api_register_user(user_data: &str) -> Result<User, String> {
     let response = match http::Request::post(&*format!("{API_ROOT}/auth/register"))
@@ -114,7 +115,7 @@ pub async fn api_update_user(user: UserUpdateData) -> Result<UserUpdateData, Str
         Err(e) => {
             console!(format!("Error Parsing Update Response JSON: {e:?}"));
             Err(format!("Failed to parse response."))
-        },
+        }
     }
 }
 

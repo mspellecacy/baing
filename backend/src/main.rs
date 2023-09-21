@@ -1,4 +1,5 @@
 mod config;
+mod db_helpers;
 mod handlers;
 mod jwt_auth;
 mod model;
@@ -10,13 +11,17 @@ use actix_web::middleware::Logger;
 use actix_web::{http::header, web, App, HttpServer};
 use config::Config;
 use dotenv::dotenv;
-use redis::Client;
+use llm_chain::executor;
+use llm_chain::options::ModelRef;
+use llm_chain_openai::chatgpt::{Executor, Model};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use std::str::FromStr;
 
 pub struct AppState {
     db: Pool<Postgres>,
     env: Config,
-    redis_client: Client,
+    redis_client: redis::Client,
+    chatgpt: Executor,
 }
 
 #[actix_web::main]
@@ -35,7 +40,7 @@ async fn main() -> std::io::Result<()> {
         .await
     {
         Ok(pool) => {
-            println!("✅Connection to the database is successful!");
+            println!("✅ Connection to the database is successful!");
             pool
         }
         Err(err) => {
@@ -44,9 +49,9 @@ async fn main() -> std::io::Result<()> {
         }
     };
 
-    let redis_client = match Client::open(config.redis_url.to_owned()) {
+    let redis_client = match redis::Client::open(config.redis_url.to_owned()) {
         Ok(client) => {
-            println!("✅Connection to the redis is successful!");
+            println!("✅ Connection to the redis is successful!");
             client
         }
         Err(e) => {
@@ -54,6 +59,14 @@ async fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
+
+    let mut opts_builder = llm_chain::options::Options::builder();
+    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(
+        Model::Gpt35Turbo,
+        //Model::Gpt4,   // Works but is slower, obviously.
+    )));
+
+    let exec = executor!(chatgpt, opts_builder.build()).unwrap();
 
     println!("🚀 Server started successfully");
 
@@ -69,15 +82,17 @@ async fn main() -> std::io::Result<()> {
             .supports_credentials();
         App::new()
             .app_data(web::Data::new(AppState {
-                db: pool.clone(),
-                env: config.clone(),
-                redis_client: redis_client.clone(),
+                db: pool.to_owned(),
+                env: config.to_owned(),
+                redis_client: redis_client.to_owned(),
+                chatgpt: exec.to_owned(),
             }))
             .service(
                 web::scope("/api")
                     .configure(handlers::auth::config)
                     .configure(handlers::user::config)
                     .configure(handlers::collections::config)
+                    .configure(handlers::ai::config),
             )
             .wrap(cors)
             .wrap(Logger::default())

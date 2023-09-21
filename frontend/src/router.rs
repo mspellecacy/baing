@@ -1,9 +1,10 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::pages::schedules_page::SchedulesPage;
 use crate::pages::{
-    home_page::HomePage, login_page::LoginPage, profile_page::ProfilePage,
-    register_page::RegisterPage, collections_page::CollectionsPage
+    collections_page::CollectionsPage, discovery_page::DiscoveryPage, home_page::HomePage,
+    login_page::LoginPage, profile_page::ProfilePage, register_page::RegisterPage,
 };
 
 #[derive(Clone, Routable, PartialEq)]
@@ -18,6 +19,10 @@ pub enum Route {
     ProfilePage,
     #[at("/collections")]
     CollectionsPage,
+    #[at("/discovery")]
+    DiscoveryPage,
+    #[at("/schedules")]
+    SchedulesPage,
 }
 
 pub fn switch(routes: Route) -> Html {
@@ -27,5 +32,7 @@ pub fn switch(routes: Route) -> Html {
         Route::LoginPage => html! {<LoginPage/> },
         Route::ProfilePage => html! {<ProfilePage/> },
         Route::CollectionsPage => html! {<CollectionsPage/> },
+        Route::DiscoveryPage => html! {<DiscoveryPage/> },
+        Route::SchedulesPage => html! {<SchedulesPage/> },
     }
 }

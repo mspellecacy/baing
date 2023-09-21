@@ -1,3 +1,3 @@
 use chrono::prelude::*;
-use serde::{Deserialize, Serialize};
 use common::model::user::User;
+use serde::{Deserialize, Serialize};

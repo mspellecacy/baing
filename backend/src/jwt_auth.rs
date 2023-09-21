@@ -4,10 +4,10 @@ use std::future::{ready, Ready};
 use actix_web::error::{ErrorInternalServerError, ErrorUnauthorized};
 use actix_web::{dev::Payload, Error as ActixWebError};
 use actix_web::{http, web, FromRequest, HttpRequest};
+use common::model::user::User;
 use futures::executor::block_on;
 use redis::Commands;
 use serde::{Deserialize, Serialize};
-use common::model::user::User;
 
 use crate::token;
 use crate::AppState;

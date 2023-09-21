@@ -1,7 +1,4 @@
-use crate::{
-    jwt_auth,
-    token, AppState,
-};
+use crate::{jwt_auth, token, AppState};
 use actix_web::{
     cookie::{time::Duration as ActixWebDuration, Cookie},
     get, post, web, HttpRequest, HttpResponse, Responder,
@@ -11,12 +8,12 @@ use argon2::{
     Argon2,
 };
 
+use crate::handlers::filter_user_record;
+use common::model::user::{LoginUserSchema, RegisterUserSchema, User};
 use redis::AsyncCommands;
 use serde_json::json;
 use sqlx::Row;
 use uuid::Uuid;
-use common::model::user::{User, LoginUserSchema, RegisterUserSchema};
-use crate::handlers::filter_user_record;
 
 #[get("/healthchecker")]
 async fn health_checker_handler() -> impl Responder {
@@ -61,9 +58,24 @@ async fn register_user_handler(
 
     match query_result {
         Ok(user) => {
+            let user_id = user.id.clone();
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
                 "user": filter_user_record(&user)
             })});
+
+            // Insert some default special collections.
+            let insert_thumbs_up_collection = sqlx::query!(
+                r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '👍 Thumbs Up', true, 'private', '{"entries": []}', true, '["Thumbs Up"]', 'thumbsup');"#,
+                user_id
+            ).fetch_one(&data.db).await;
+            let insert_thumbs_down_collection = sqlx::query!(
+                r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '👎 Thumbs Down', true, 'private', '{"entries": []}', true, '["Thumbs Down"]', 'thumbsdown');"#,
+                user_id
+            ).fetch_one(&data.db).await;
+            let insert_skipped_collection = sqlx::query!(
+                r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '🤔 Skipped', true, 'private', '{"entries": []}', true, '["Skipped"]', 'skipped');"#,
+                user_id
+            ).fetch_one(&data.db).await;
 
             return HttpResponse::Ok().json(user_response);
         }
@@ -84,9 +96,9 @@ async fn login_user_handler(
         "SELECT * FROM users WHERE email = $1",
         body.email.to_lowercase()
     )
-        .fetch_optional(&data.db)
-        .await
-        .unwrap();
+    .fetch_optional(&data.db)
+    .await
+    .unwrap();
 
     let user = match query_result {
         Some(user) => user,

@@ -33,9 +33,7 @@ impl UiHelpers {
                 let input = HtmlInputElement::from(JsValue::from(elem));
                 input.set_value(&*value);
             }
-
         }
-
     }
 
     pub fn get_value_from_checkbox_by_id(id: &str) -> Option<bool> {

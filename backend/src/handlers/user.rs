@@ -1,12 +1,10 @@
-use actix_web::{get, web, HttpResponse, Responder, patch};
+use crate::handlers::filter_user_record;
+use crate::{jwt_auth, AppState};
+use actix_web::{get, patch, web, HttpResponse, Responder};
+use common::model::user::UpdateUserSchema;
 use redis::AsyncCommands;
 use serde_json::json;
-use sqlx::{Row};
-use common::model::user::UpdateUserSchema;
-use crate::{
-    jwt_auth, AppState,
-};
-use crate::handlers::filter_user_record;
+use sqlx::Row;
 
 #[get("/user/me")]
 async fn get_me_handler(jwt_guard: jwt_auth::JwtMiddleware) -> impl Responder {
@@ -46,7 +44,6 @@ async fn patch_me_handler(
         });
 
         HttpResponse::Ok().json(res)
-
     } else {
         HttpResponse::InternalServerError().json(json!({
             "status": "error",
@@ -56,6 +53,5 @@ async fn patch_me_handler(
 }
 
 pub fn config(conf: &mut web::ServiceConfig) {
-    conf.service(get_me_handler)
-        .service(patch_me_handler);
+    conf.service(get_me_handler).service(patch_me_handler);
 }

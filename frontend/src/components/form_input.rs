@@ -1,5 +1,5 @@
-use std::{cell::RefCell, rc::Rc};
 use std::ops::Not;
+use std::{cell::RefCell, rc::Rc};
 
 use validator::ValidationErrors;
 use wasm_bindgen::JsCast;

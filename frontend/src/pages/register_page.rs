@@ -3,7 +3,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::api::user_api::api_register_user;
-use crate::components::{form_input::FormInput, loading_button::LoadingButton, header::Header};
+use crate::components::{form_input::FormInput, header::Header, loading_button::LoadingButton};
 use crate::router::{self, Route};
 use crate::store::{set_page_loading, set_show_alert, Store};
 
@@ -21,18 +21,18 @@ struct RegisterUserSchema {
     #[validate(length(min = 1, message = "Name is required"))]
     name: String,
     #[validate(
-    length(min = 1, message = "Email is required"),
-    email(message = "Email is invalid")
+        length(min = 1, message = "Email is required"),
+        email(message = "Email is invalid")
     )]
     email: String,
     #[validate(
-    length(min = 1, message = "Password is required"),
-    length(min = 6, message = "Password must be at least 6 characters")
+        length(min = 1, message = "Password is required"),
+        length(min = 6, message = "Password must be at least 6 characters")
     )]
     password: String,
     #[validate(
-    length(min = 1, message = "Please confirm your password"),
-    must_match(other = "password", message = "Passwords do not match")
+        length(min = 1, message = "Please confirm your password"),
+        must_match(other = "password", message = "Passwords do not match")
     )]
     password_confirm: String,
 }

@@ -17,6 +17,8 @@ pub struct Config {
     pub refresh_token_public_key: String,
     pub refresh_token_expires_in: String,
     pub refresh_token_max_age: i64,
+
+    pub openai_api_key: String,
 }
 
 impl Config {
@@ -34,6 +36,7 @@ impl Config {
         let refresh_token_public_key = get_env_var("REFRESH_TOKEN_PUBLIC_KEY");
         let refresh_token_expires_in = get_env_var("REFRESH_TOKEN_EXPIRED_IN");
         let refresh_token_max_age = get_env_var("REFRESH_TOKEN_MAXAGE");
+        let openai_api_key = get_env_var("OPENAI_API_KEY");
 
         Config {
             database_url,
@@ -47,6 +50,7 @@ impl Config {
             refresh_token_expires_in,
             access_token_max_age: access_token_max_age.parse::<i64>().unwrap(),
             refresh_token_max_age: refresh_token_max_age.parse::<i64>().unwrap(),
+            openai_api_key,
         }
     }
 }

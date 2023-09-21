@@ -5,10 +5,10 @@ use uuid::Uuid;
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq)]
 pub struct User {
-    pub id: uuid::Uuid,
+    pub id: Uuid,
     pub name: String,
     pub email: String,
-    #[serde(skip_deserializing)]
+    #[serde(skip_deserializing, skip_serializing)]
     pub password: String,
     pub role: String,
     pub photo: String,
@@ -65,7 +65,6 @@ pub struct UpdateUserSchema {
     pub name: String,
     pub tmdb_api_key: String,
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct LoginUserSchema {

@@ -41,16 +41,21 @@ pub fn header_component() -> Html {
     };
 
     html! {
-        <div class="navbar bg-base-100 flex flex-row gap-2">
+        <div class="navbar bg-base-100 flex flex-row">
           <div class="flex-1">
             <Link<Route> to={Route::HomePage} classes="btn btn-ghost normal-case text-xl">{"Bainger"}</Link<Route>>
           </div>
           if user.is_some() {
             <div class="flex-initial">
-            <Link<Route> to={Route::CollectionsPage} classes="text-ct-dark-600">{"Collections"}</Link<Route>>
+                <Link<Route> to={Route::DiscoveryPage} classes="text-ct-dark-600">{"Discover"}</Link<Route>>
             </div>
+            <div class="divider divider-horizontal"></div>
+            <div class="flex">
+                <Link<Route> to={Route::CollectionsPage} classes="text-ct-dark-600">{"Collections"}</Link<Route>>
+            </div>
+            <div class="divider divider-horizontal"></div>
             <div class="flex-1">
-            <Link<Route> to={Route::ProfilePage} classes="text-ct-dark-600">{"Schedules"}</Link<Route>>
+                <Link<Route> to={Route::SchedulesPage} classes="text-ct-dark-600">{"Schedules"}</Link<Route>>
             </div>
           }
           <div class="flex-none gap-2">
@@ -59,25 +64,25 @@ pub fn header_component() -> Html {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
               </label>
               <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-           if user.is_some() {
-               <>
-                <li>
-                  <Link<Route> to={Route::ProfilePage} classes="text-ct-dark-600">{"Profile"}</Link<Route>>
-                </li>
-                <li onclick={handle_logout}>
-                  <a>{"Logout"}</a>
-                </li>
-              </>
-            } else {
-              <>
-                <li>
-                  <Link<Route> to={Route::RegisterPage} classes="text-ct-dark-600">{"Sign Up"}</Link<Route>>
-                </li>
-                <li>
-                  <Link<Route> to={Route::LoginPage} classes="text-ct-dark-600">{"Login"}</Link<Route>>
-                </li>
-              </>
-            }
+               if user.is_some() {
+                   <>
+                    <li>
+                      <Link<Route> to={Route::ProfilePage} classes="text-ct-dark-600">{"Profile"}</Link<Route>>
+                    </li>
+                    <li onclick={handle_logout}>
+                      <a>{"Logout"}</a>
+                    </li>
+                  </>
+                } else {
+                  <>
+                    <li>
+                      <Link<Route> to={Route::RegisterPage} classes="text-ct-dark-600">{"Sign Up"}</Link<Route>>
+                    </li>
+                    <li>
+                      <Link<Route> to={Route::LoginPage} classes="text-ct-dark-600">{"Login"}</Link<Route>>
+                    </li>
+                  </>
+                }
               </ul>
             </div>
           </div>

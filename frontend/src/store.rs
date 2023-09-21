@@ -1,6 +1,7 @@
+use common::model::collections::UserCollection;
+use common::model::user::User;
 use serde::{Deserialize, Serialize};
 use yewdux::prelude::*;
-use common::model::user::User;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default, Clone)]
 pub struct AlertInput {
@@ -13,7 +14,7 @@ pub struct Store {
     pub auth_user: Option<User>,
     pub page_loading: bool,
     pub alert_input: AlertInput,
-    pub collections: Option<Vec<String>>,
+    pub collections: Option<Vec<UserCollection>>,
     pub schedules: Option<Vec<String>>,
 }
 
