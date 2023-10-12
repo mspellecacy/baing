@@ -57,7 +57,7 @@ fn get_input_callback(
 #[function_component(RegisterPage)]
 pub fn register_page() -> Html {
     let (store, dispatch) = use_store::<Store>();
-    let form = use_state(|| RegisterUserSchema::default());
+    let form = use_state(RegisterUserSchema::default);
     let validation_errors = use_state(|| Rc::new(RefCell::new(ValidationErrors::new())));
     let navigator = use_navigator().unwrap();
 

@@ -14,15 +14,12 @@ struct ContentCollections {
 }
 
 fn media_item(media: Media) -> Html {
-    match media {
-        Media::Movie(movie) => {
-            //let movie_entry = format!("{} - {}", movie.name, movie.year);
-            html! {<li>{format!("{} - {}", movie.name, movie.year)}</li>}
-        }
-        Media::TvShow(tv_show) => {
-            html! {<li></li>}
-        }
-    }
+    let li = match media {
+        Media::Movie(movie) => format!("📽️ {movie}"),
+        Media::TvShow(tv_show) => format!("📺 {tv_show}"),
+    };
+
+    html! {<li>{li}</li>}
 }
 
 #[function_component(CollectionsPage)]
@@ -33,7 +30,7 @@ pub fn collections_page() -> Html {
     if user.is_none() {
         navigator.push(&router::Route::LoginPage);
     }
-    let mut collections = use_state(|| store.collections.clone().unwrap_or_else(|| vec![]));
+    let collections = use_state(|| store.collections.clone().unwrap_or_default());
 
     {
         let collections = collections.clone();
@@ -53,7 +50,7 @@ pub fn collections_page() -> Html {
                             })
                         }
                         Err(e) => {
-                            console!(e.clone());
+                            console!(format!("Error getting user collections: {e}"));
                             set_page_loading(false, &dispatch);
                             if e.contains("You are not logged in") {
                                 set_show_alert(e.to_string(), &dispatch);
@@ -76,11 +73,11 @@ pub fn collections_page() -> Html {
                 <p>{"You have no collections! You should create one!"}</p>
             } else {
                 {
-                    active_collection.into_iter().map(|col| {
+                    active_collection.iter().map(|col| {
                         html!{
                             <div class="card">
                                 <div class="card-body">
-                                <h2 class="card-title">{ format!("{}",col.name) }</h2>
+                                <h2 class="card-title">{ format!("{} ({})",col.name, col.collection.entries.len()) }</h2>
                                 <ul>
                                     {
                                         col.collection.entries.iter().map(|media| {

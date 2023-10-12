@@ -16,7 +16,9 @@ validator = { version = "0.16.1", features = ["derive"] }
 wasm-bindgen = "0.2.87"
 wasm-bindgen-futures = "0.4.37"
 web-sys = { version = "0.3.64", features = ["HtmlInputElement", "Window"] }
-yew = { version = "0.20.0", features = ["csr"] }
+yew = { version =  "0.20.0", features = ["csr"] }
 yew-router = "0.17.0"
 yewdux = "0.9.3"
 common = { path = "../common" }
+futures = "0.3.28"
+rand = "0.8.5"

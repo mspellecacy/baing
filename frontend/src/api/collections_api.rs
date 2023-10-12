@@ -7,7 +7,7 @@ use gloo::console::console;
 use reqwasm::http;
 
 pub async fn api_get_user_collections() -> Result<Vec<UserCollection>, String> {
-    let response = match http::Request::get(&*format!("{API_ROOT}/collections"))
+    let response = match http::Request::get(&format!("{API_ROOT}/collections"))
         .credentials(http::RequestCredentials::Include)
         .send()
         .await
@@ -30,7 +30,7 @@ pub async fn api_get_user_collections() -> Result<Vec<UserCollection>, String> {
         Ok(res) => Ok(res.data.collections),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
-            Err(format!("Failed to parse response."))
+            Err("Failed to parse response.".to_string())
         }
     }
 }
@@ -38,11 +38,11 @@ pub async fn api_get_user_collections() -> Result<Vec<UserCollection>, String> {
 pub async fn api_patch_user_collection(
     user_collection: UserCollection,
 ) -> Result<UserCollection, String> {
-    let uc_id = user_collection.id.clone();
-    let uc_json = serde_json::to_string(&user_collection)
+    let uc_id = user_collection.id;
+    let uc_json = serde_json::to_string_pretty(&user_collection)
         .expect("Error Serializing User Collection into JSON payload");
 
-    let response = match http::Request::patch(&*format!("{API_ROOT}/collection/{uc_id}"))
+    let response = match http::Request::patch(&format!("{API_ROOT}/collection/{uc_id}"))
         .credentials(http::RequestCredentials::Include)
         .header("Content-Type", "application/json")
         //.header(ACCEPT, "application/json")
@@ -68,7 +68,7 @@ pub async fn api_patch_user_collection(
         Ok(res) => Ok(res.data),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
-            Err(format!("Failed to parse response."))
+            Err("Failed to parse response.".to_string())
         }
     }
 }

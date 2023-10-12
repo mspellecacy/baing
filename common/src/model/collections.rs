@@ -1,10 +1,9 @@
-use crate::model::discovery::Movie;
+use crate::model::core::{Movie, TvShow};
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use sqlx::types::JsonValue;
-use std::error::Error;
-use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
+use std::mem;
 use uuid::Uuid;
 
 // {
@@ -26,10 +25,51 @@ use uuid::Uuid;
 //     Friends,
 // }
 
+pub trait IsMedia {
+    fn as_media(&self) -> Media;
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub enum Media {
     Movie(Movie),
-    TvShow(String),
+    TvShow(TvShow),
+}
+
+impl IsMedia for Movie {
+    fn as_media(&self) -> Media {
+        Media::Movie(self.clone())
+    }
+}
+
+impl IsMedia for TvShow {
+    fn as_media(&self) -> Media {
+        Media::TvShow(self.clone())
+    }
+}
+
+impl Display for Movie {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} ({})", self.name, self.year)
+    }
+}
+
+impl Display for TvShow {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} [{}] ({})",
+            self.name, self.language, self.first_air_date
+        )
+    }
+}
+
+impl Display for Media {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Media::Movie(m) => write!(f, "{}", m),
+            Media::TvShow(t) => write!(f, "{}", t),
+        }
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
@@ -43,8 +83,8 @@ impl From<Option<JsonValue>> for MediaCollection {
             match serde_json::from_value(json_value.clone()) {
                 Ok(val) => val,
                 Err(e) => {
-                    println!("json: {}", json_value.to_string());
-                    println!("error: {}", e.to_string());
+                    println!("json: {}", json_value);
+                    println!("error: {}", e);
 
                     MediaCollection { entries: vec![] }
                 }
@@ -84,4 +124,32 @@ pub struct UserCollectionResponse {
 pub struct UserCollectionPatchResponse {
     pub status: String,
     pub data: UserCollection,
+}
+
+pub fn extract_special_collection_to_entries(
+    special_collection: &[UserCollection],
+    special_name: &str,
+    media_type: &Media,
+) -> String {
+    special_collection
+        .iter()
+        .filter(|uc| uc.special.clone().is_some_and(|s| s == special_name))
+        .map(|uc| {
+            uc.collection
+                .entries
+                .iter()
+                .filter(|media| mem::discriminant(*media) == mem::discriminant(media_type))
+                .map(|media| match media {
+                    Media::Movie(movie) => {
+                        format!("{} ({})", movie.name.clone(), movie.year) // Interstellar (2014)
+                    }
+                    Media::TvShow(tv_show) => {
+                        format!("//TODO: tv_show: {tv_show}")
+                    }
+                })
+                .collect::<Vec<String>>()
+                .join(", ") // ".. Interstellar (2014), Jurassic Park (1993),  .."
+        })
+        .collect::<Vec<String>>()
+        .join(" ")
 }

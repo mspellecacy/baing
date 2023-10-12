@@ -1,10 +1,40 @@
+use std::ops::Div;
 use crate::api::API_ROOT;
-use common::model::discovery::{Movie, RandomMoviesResponse};
+use common::model::collections::{IsMedia, Media};
+use common::model::core::TvShow;
+use common::model::discovery::{RandomMoviesResponse, RandomTvShowsResponse};
 use gloo::console::console;
 use reqwasm::http;
-use std::error::Error;
 
-pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<Movie>, String> {
+pub async fn api_get_discovery_both_random(mut count: Option<i16>) -> Result<Vec<Media>, String> {
+    use rand::seq::SliceRandom;
+    use rand::thread_rng;
+
+    if let Some(cnt) = count {
+        count = Some(cnt.div(2)); // Split the request count 'event' between both types.
+    }
+
+    let mut out: Vec<Media> = Vec::new();
+
+    // Hurray Fearless Concurrency!
+    let (mut movies, mut shows) = futures::join!(
+        api_get_discovery_movies_random(count),
+        api_get_discovery_tv_shows_random(count)
+    );
+
+    if let Ok(mut movies) = movies {
+        out.append(&mut movies);
+    }
+    if let Ok(mut shows) = shows {
+        out.append(&mut shows);
+    }
+
+    // Mix'em up before pushing them along
+    out.shuffle(&mut thread_rng());
+    Ok(out)
+}
+
+pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<Media>, String> {
     // let mock_response =
     // r#"{
     //     "data": {
@@ -35,21 +65,92 @@ pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<M
     // }"#;
     //let res_json:Result<RandomMoviesResponse, _> = serde_json::from_str(mock_response);
 
-    let title_count = count.unwrap_or_else(|| 25);
-    let response =
-        match http::Request::get(&*format!("{API_ROOT}/discovery/movies/rand/{title_count}"))
-            .credentials(http::RequestCredentials::Include)
-            .send()
-            .await
-        {
-            Ok(res) => res,
-            Err(_) => return Err("Failed to make request".to_string()),
-        };
+    let title_count = count.unwrap_or(25);
+    let response = match http::Request::get(&format!(
+        "{}/discovery/movies/rand/{}",
+        API_ROOT, title_count
+    ))
+    .credentials(http::RequestCredentials::Include)
+    .send()
+    .await
+    {
+        Ok(res) => res,
+        Err(e) => return Err(format!("Failed to make request: {e}")),
+    };
 
     let res_json = response.json::<RandomMoviesResponse>().await;
 
     match res_json {
-        Ok(res) => Ok(res.data.movies),
+        Ok(res) => {
+            //let out = res.data.movies.into_iter().map(|c| Media::Movie(c.clone())).collect();
+            Ok(res.data.movies.into_iter().map(|c| c.as_media()).collect())
+        }
+        Err(e) => {
+            console!(format!("Error Parsing Response JSON: {e:?}"));
+            Err(format!("Failed to parse API response: {e}"))
+        }
+    }
+}
+
+pub async fn api_get_discovery_tv_shows_random(count: Option<i16>) -> Result<Vec<Media>, String> {
+    // let mock_response =
+    // r#"{
+    //     "data":{
+    //         "tv_shows":[
+    //         {
+    //             "first_air_date":"1994-09-22",
+    //             "name":"Friends",
+    //             "language":"en-US"
+    //         },
+    //         {
+    //             "first_air_date":"2008-01-20",
+    //             "name":"Breaking Bad",
+    //             "language":"en-US"
+    //         },
+    //         {
+    //             "first_air_date":"2011-04-17",
+    //             "name":"Game of Thrones",
+    //             "language":"en-US"
+    //         },
+    //         {
+    //             "first_air_date":"1989-12-17",
+    //             "name":"The Simpsons",
+    //             "language":"en-US"
+    //         },
+    //         {
+    //             "first_air_date":"2010-07-25",
+    //             "name":"Sherlock",
+    //             "language":"en-GB"
+    //         }
+    //         ]
+    //     }
+    //     "status": "success"
+    // }"#;
+    //
+    // let res_json:Result<RandomTvShowsResponse, _> = serde_json::from_str(mock_response);
+
+    let title_count = count.unwrap_or(25);
+    let response = match http::Request::get(&format!(
+        "{}/discovery/tv-shows/rand/{}",
+        API_ROOT, title_count
+    ))
+    .credentials(http::RequestCredentials::Include)
+    .send()
+    .await
+    {
+        Ok(res) => res,
+        Err(e) => return Err(format!("Failed to make request: {e}")),
+    };
+
+    let res_json = response.json::<RandomTvShowsResponse>().await;
+
+    match res_json {
+        Ok(res) => Ok(res
+            .data
+            .tv_shows
+            .into_iter()
+            .map(|c| c.as_media())
+            .collect()),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
             Err(format!("Failed to parse API response: {e}"))

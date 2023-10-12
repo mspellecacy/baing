@@ -53,7 +53,7 @@ fn get_input_callback(
 pub fn profile_page() -> Html {
     let (store, dispatch) = use_store::<Store>();
     let user = store.auth_user.clone();
-    let form = use_state(|| UpdateUserSchema::default());
+    let form = use_state(UpdateUserSchema::default);
     let validation_errors = use_state(|| Rc::new(RefCell::new(ValidationErrors::new())));
     let navigator = use_navigator().unwrap();
 
@@ -140,7 +140,7 @@ pub fn profile_page() -> Html {
                                 role: user.role.to_owned(),
                                 name: user.name.clone(),
                                 verified: user.verified,
-                                tmdb_api_key: user.tmdb_api_key.unwrap_or_else(|| String::new()),
+                                tmdb_api_key: user.tmdb_api_key.unwrap_or_else(String::new),
                             });
                         }
                         Err(e) => {

@@ -7,7 +7,7 @@ use reqwasm::http;
 use serde_json::json;
 
 pub async fn api_register_user(user_data: &str) -> Result<User, String> {
-    let response = match http::Request::post(&*format!("{API_ROOT}/auth/register"))
+    let response = match http::Request::post(&format!("{API_ROOT}/auth/register"))
         .header("Content-Type", "application/json")
         .body(user_data)
         .send()
@@ -35,7 +35,7 @@ pub async fn api_register_user(user_data: &str) -> Result<User, String> {
 }
 
 pub async fn api_login_user(credentials: &str) -> Result<UserLoginResponse, String> {
-    let response = match http::Request::post(&*format!("{API_ROOT}/auth/login"))
+    let response = match http::Request::post(&format!("{API_ROOT}/auth/login"))
         .header("Content-Type", "application/json")
         .credentials(http::RequestCredentials::Include)
         .body(credentials)
@@ -63,7 +63,7 @@ pub async fn api_login_user(credentials: &str) -> Result<UserLoginResponse, Stri
 }
 
 pub async fn api_user_info() -> Result<User, String> {
-    let response = match http::Request::get(&*format!("{API_ROOT}/user/me"))
+    let response = match http::Request::get(&format!("{API_ROOT}/user/me"))
         .credentials(http::RequestCredentials::Include)
         .send()
         .await
@@ -90,7 +90,7 @@ pub async fn api_user_info() -> Result<User, String> {
 
 pub async fn api_update_user(user: UserUpdateData) -> Result<UserUpdateData, String> {
     let json_body = json!(user).to_string();
-    let response = match http::Request::patch(&*format!("{API_ROOT}/user/me"))
+    let response = match http::Request::patch(&format!("{API_ROOT}/user/me"))
         .credentials(http::RequestCredentials::Include)
         .header("Content-Type", "application/json")
         .body(json_body)
@@ -114,13 +114,13 @@ pub async fn api_update_user(user: UserUpdateData) -> Result<UserUpdateData, Str
         Ok(res) => Ok(res.data),
         Err(e) => {
             console!(format!("Error Parsing Update Response JSON: {e:?}"));
-            Err(format!("Failed to parse response."))
+            Err("Failed to parse response.".to_string())
         }
     }
 }
 
 pub async fn api_logout_user() -> Result<(), String> {
-    let response = match http::Request::get(&*format!("{API_ROOT}/auth/logout"))
+    let response = match http::Request::get(&format!("{API_ROOT}/auth/logout"))
         .credentials(http::RequestCredentials::Include)
         .send()
         .await

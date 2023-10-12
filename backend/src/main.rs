@@ -1,3 +1,4 @@
+mod ai;
 mod config;
 mod db_helpers;
 mod handlers;
@@ -5,7 +6,6 @@ mod jwt_auth;
 mod model;
 mod response;
 mod token;
-
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{http::header, web, App, HttpServer};

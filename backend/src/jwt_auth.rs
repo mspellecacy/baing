@@ -113,7 +113,7 @@ impl FromRequest for JwtMiddleware {
                 Err(_) => {
                     let json_error = ErrorResponse {
                         status: "error".to_string(),
-                        message: "Faled to check user existence".to_string(),
+                        message: "Failed to check user existence".to_string(),
                     };
                     Err(ErrorInternalServerError(json_error))
                 }

@@ -56,7 +56,7 @@ pub fn form_input_component(props: &Props) -> Html {
             handle_on_input_blur.emit((input_name, value));
         })
     };
-    let input_error = error_message.is_empty().not().then(|| Some("input-error"));
+    let input_error = error_message.is_empty().not().then_some("input-error");
 
     html! {
     <div class="form-control w-full max-w-xs">
@@ -77,7 +77,7 @@ pub fn form_input_component(props: &Props) -> Html {
         onchange={onchange}
         onblur={on_blur}
         value={props.value.clone()}
-        disabled={props.disabled.clone().unwrap_or(false)}
+        disabled={props.disabled.unwrap_or(false)}
       />
     <span class="label text-xs pt-1">
         <span class="label-text-alt text-error">

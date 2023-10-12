@@ -48,7 +48,7 @@ fn get_input_callback(
 #[function_component(LoginPage)]
 pub fn login_page() -> Html {
     let (store, dispatch) = use_store::<Store>();
-    let form = use_state(|| LoginUserSchema::default());
+    let form = use_state(LoginUserSchema::default);
     let validation_errors = use_state(|| Rc::new(RefCell::new(ValidationErrors::new())));
     let navigator = use_navigator().unwrap();
 
@@ -161,79 +161,56 @@ pub fn login_page() -> Html {
     };
 
     html! {
-    <>
+        <>
         <Header />
-        <section class="min-h-screen grid place-items-center">
-          <div class="card w-96 shadow-xl bg-base-200">
-            <h1 class="text-4xl xl:text-6xl text-center font-[600] mb-4 mt-4">{"Login"}</h1>
-              <form
-                onsubmit={on_submit}
-                class="max-w-md w-full mx-auto overflow-hidden shadow-lg p-8 space-y-5"
-              >
-                <FormInput
-                    label="Email"
-                    name="email"
-                    input_type="email"
-                    placeholder="your@login.email"
-                    input_ref={email_input_ref}
-                    handle_onchange={handle_email_input}
-                    errors={&*validation_errors}
-                    handle_on_input_blur={Callback::noop()}
-                />
-                <FormInput
-                    label="Password"
-                    name="password"
-                    input_type="password"
-                    placeholder="Hunter123"
-                    input_ref={password_input_ref}
-                    handle_onchange={handle_password_input}
-                    errors={&*validation_errors}
-                    handle_on_input_blur={Callback::noop()}
-                />
-                // TODO: Actually implement password reset...
-                <div class="text-right"></div>
-                <LoadingButton
-                  loading={store.page_loading}
-                  text_color={Some("text-ct-blue-600".to_string())}
+        <section class="grid place-items-center">
+            <h1 class="text-4xl xl:text-6xl text-center font-[600] mt-4 mb-4">{"Login"}</h1>
+            <div class="card w-96 shadow-xl bg-base-200">
+                <form
+                        onsubmit={on_submit}
+                        class="max-w-md w-full mx-auto overflow-hidden shadow-lg p-8 space-y-5"
                 >
-                  {"Login"}
-                </LoadingButton>
-                <div class="divider pb-4">
-                    <figure>
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M7 14C8.10457 14 9 13.1046 9 12C9 10.8954 8.10457 10 7 10C5.89543 10 5 10.8954 5 12C5 13.1046 5.89543 14 7 14Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M19 12C19 13.1046 18.1046 14 17 14C15.8954 14 15 13.1046 15 12C15 10.8954 15.8954 10 17 10C18.1046 10 19 10.8954 19 12Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                            d="M7 5C3.13401 5 0 8.13401 0 12C0 15.866 3.13401 19 7 19H17C20.866 19 24 15.866 24 12C24 8.13401 20.866 5 17 5H7ZM17 8H7C4.79086 8 3 9.79086 3 12C3 14.2091 4.79086 16 7 16H17C19.2091 16 21 14.2091 21 12C21 9.79086 19.2091 8 17 8Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                    </figure>
-                </div>
-                <a class="pt-4" href="#">
-                    {"Forgot Password?"}
-                </a>
-                <span class="block">
-                  {"Need an account?"}
-                  <Link<Route> to={Route::RegisterPage} classes="text-ct-blue-600">{ "Sign Up Here" }</Link<Route>>
-                </span>
-              </form>
-          </div>
+                    <FormInput
+                            label="Email"
+                            name="email"
+                            input_type="email"
+                            placeholder="your@login.email"
+                            input_ref={email_input_ref}
+                            handle_onchange={handle_email_input}
+                            errors={&*validation_errors}
+                            handle_on_input_blur={Callback::noop()}
+                    />
+                    <FormInput
+                            label="Password"
+                            name="password"
+                            input_type="password"
+                            placeholder="Hunter123"
+                            input_ref={password_input_ref}
+                            handle_onchange={handle_password_input}
+                            errors={&*validation_errors}
+                            handle_on_input_blur={Callback::noop()}
+                    />
+                    // TODO: Actually implement password reset...
+                    <div class="text-right"></div>
+                    <LoadingButton
+                            loading={store.page_loading}
+                            text_color={Some("text-ct-blue-600".to_string())}
+                    >
+                        {"Login"}
+                    </LoadingButton>
+                    <div class="divider pb-4">
+
+                        {"!"}
+                    </div>
+
+                    <Link<Route> to={Route::RegisterPage} classes="text-ct-blue-600">{"Need an account?"}</Link<Route>>
+                    <br />
+                    <a class="pt-4" href="#">
+                    {"//TODO: Forgot Password?"}
+                    </a>
+                </form>
+            </div>
         </section>
-    </>
+        </>
     }
 }
