@@ -1,9 +1,9 @@
 use common::model::collections::{IsMedia, Media};
 use common::model::core::{Movie, MovieDetails, TvShow, TvShowDetails};
 use common::model::tmdb::{MovieSearch, MovieSearchResult, TvSearch, TvSearchResult};
+use gloo::console::console;
 use reqwasm::http;
 use std::error;
-use gloo::console::console;
 
 const API_BASE: &str = "https://api.themoviedb.org/3";
 

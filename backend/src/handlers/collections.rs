@@ -3,9 +3,6 @@ use crate::{jwt_auth, AppState};
 use actix_web::{get, patch, web, HttpResponse, Responder};
 use common::model::collections::UserCollection;
 use common::model::collections::UserCollectionPatchResponse;
-use common::model::user::User;
-use env_logger::Logger;
-use log::{debug, info};
 use uuid::Uuid;
 
 #[get("/collections/special")]

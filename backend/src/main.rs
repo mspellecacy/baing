@@ -8,7 +8,7 @@ mod response;
 mod token;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
-use actix_web::{http::header, web, App, HttpServer};
+use actix_web::{http::header, middleware, web, App, HttpServer};
 use config::Config;
 use dotenv::dotenv;
 use llm_chain::executor;
@@ -87,6 +87,7 @@ async fn main() -> std::io::Result<()> {
                 redis_client: redis_client.to_owned(),
                 chatgpt: exec.to_owned(),
             }))
+            .wrap(middleware::Compress::default())
             .service(
                 web::scope("/api")
                     .configure(handlers::auth::config)

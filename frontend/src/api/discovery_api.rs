@@ -1,25 +1,25 @@
-use std::ops::Div;
 use crate::api::API_ROOT;
 use common::model::collections::{IsMedia, Media};
 use common::model::core::TvShow;
 use common::model::discovery::{RandomMoviesResponse, RandomTvShowsResponse};
 use gloo::console::console;
 use reqwasm::http;
+use std::ops::Div;
 
-pub async fn api_get_discovery_both_random(mut count: Option<i16>) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_both_random(mut count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
     use rand::seq::SliceRandom;
     use rand::thread_rng;
 
     if let Some(cnt) = count {
-        count = Some(cnt.div(2)); // Split the request count 'event' between both types.
+        count = Some(cnt.div(2)); // Split the request count 'evenly' between both types.
     }
 
     let mut out: Vec<Media> = Vec::new();
 
     // Hurray Fearless Concurrency!
     let (mut movies, mut shows) = futures::join!(
-        api_get_discovery_movies_random(count),
-        api_get_discovery_tv_shows_random(count)
+        api_get_discovery_movies_random(count, &query),
+        api_get_discovery_tv_shows_random(count, &query)
     );
 
     if let Ok(mut movies) = movies {
@@ -34,7 +34,7 @@ pub async fn api_get_discovery_both_random(mut count: Option<i16>) -> Result<Vec
     Ok(out)
 }
 
-pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_movies_random(count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
     // let mock_response =
     // r#"{
     //     "data": {
@@ -67,8 +67,8 @@ pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<M
 
     let title_count = count.unwrap_or(25);
     let response = match http::Request::get(&format!(
-        "{}/discovery/movies/rand/{}",
-        API_ROOT, title_count
+        "{}/discovery/movies/rand/{}?query={}",
+        API_ROOT, title_count, query
     ))
     .credentials(http::RequestCredentials::Include)
     .send()
@@ -92,7 +92,7 @@ pub async fn api_get_discovery_movies_random(count: Option<i16>) -> Result<Vec<M
     }
 }
 
-pub async fn api_get_discovery_tv_shows_random(count: Option<i16>) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_tv_shows_random(count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
     // let mock_response =
     // r#"{
     //     "data":{
@@ -131,8 +131,8 @@ pub async fn api_get_discovery_tv_shows_random(count: Option<i16>) -> Result<Vec
 
     let title_count = count.unwrap_or(25);
     let response = match http::Request::get(&format!(
-        "{}/discovery/tv-shows/rand/{}",
-        API_ROOT, title_count
+        "{}/discovery/tv-shows/rand/{}?query={}",
+        API_ROOT, title_count, query
     ))
     .credentials(http::RequestCredentials::Include)
     .send()

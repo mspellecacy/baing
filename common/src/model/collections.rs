@@ -139,14 +139,7 @@ pub fn extract_special_collection_to_entries(
                 .entries
                 .iter()
                 .filter(|media| mem::discriminant(*media) == mem::discriminant(media_type))
-                .map(|media| match media {
-                    Media::Movie(movie) => {
-                        format!("{} ({})", movie.name.clone(), movie.year) // Interstellar (2014)
-                    }
-                    Media::TvShow(tv_show) => {
-                        format!("//TODO: tv_show: {tv_show}")
-                    }
-                })
+                .map(|media| media.to_string())
                 .collect::<Vec<String>>()
                 .join(", ") // ".. Interstellar (2014), Jurassic Park (1993),  .."
         })
