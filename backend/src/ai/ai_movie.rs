@@ -1,11 +1,11 @@
-use crate::handlers::ai;
+
 use common::model::collections::{Media, UserCollection};
 use common::model::core::Movie;
-use common::model::*;
+
 use llm_chain::step::Step;
 use llm_chain::{chains, parameters, prompt};
 use llm_chain_openai::chatgpt::Executor;
-use log::{debug, info};
+use log::{debug};
 use std::error;
 
 pub async fn get_random(
@@ -34,7 +34,7 @@ pub async fn get_random(
 
     let main_prompt = "You are bAIng, an AI assistant that helps create curated lists of TV shows and Movies. You respond only with JSON.";
     let message = format!("Return a diverse collections of {count} movies from the past 60 years in the form a JSON Array named 'movies' with the fields 'name' containing the name of the movie as a string, and 'year' containing the year of the movie's release as a number. Take the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
-    debug!("{}", &message);
+    debug!("Debug | OpenAI Request: {}", &message);
 
     let chain = chains::conversation::Chain::new(llm_chain::prompt!(system: main_prompt));
     let step1 = Step::for_prompt_template(prompt!(user: message.as_str()));
@@ -54,6 +54,7 @@ pub async fn get_guided(
 ) -> Result<String, Box<dyn error::Error>> {
     // Dummy Media::Movie to filter against. I feel like I'm not understanding something with this.
     let media_type = Media::Movie(Movie::default());
+
     let unliked_list = common::model::collections::extract_special_collection_to_entries(
         &special_collections,
         "thumbsdown",
@@ -72,7 +73,7 @@ pub async fn get_guided(
 
     let main_prompt = "You are bAIng, an AI assistant that helps create curated lists of TV shows and Movies. You respond only with JSON.";
     let message = format!("Return a collections of {count} movies based on User's Prompt in the form a JSON Array named 'movies' with the fields 'name' containing the name of the movie as a string, and 'year' containing the year of the movie's release as a number. \n User's Prompt: {prompt} \nTake the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
-    println!("{}", &message);
+    debug!("Debug | OpenAI Request: {}", &message);
 
     let chain = chains::conversation::Chain::new(llm_chain::prompt!(system: main_prompt));
     let step1 = Step::for_prompt_template(prompt!(user: message.as_str()));
@@ -82,5 +83,4 @@ pub async fn get_guided(
     Ok(out
         .primary_textual_output()
         .expect("Bad response from OpenAI?"))
-
 }

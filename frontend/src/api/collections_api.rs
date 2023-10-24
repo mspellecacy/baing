@@ -39,7 +39,7 @@ pub async fn api_patch_user_collection(
     user_collection: UserCollection,
 ) -> Result<UserCollection, String> {
     let uc_id = user_collection.id;
-    let uc_json = serde_json::to_string_pretty(&user_collection)
+    let uc_json = serde_json::to_string(&user_collection)
         .expect("Error Serializing User Collection into JSON payload");
 
     let response = match http::Request::patch(&format!("{API_ROOT}/collection/{uc_id}"))
@@ -56,10 +56,10 @@ pub async fn api_patch_user_collection(
 
     if response.status() != 200 {
         let error_response = response.json::<ErrorResponse>().await;
-        if let Ok(error_response) = error_response {
-            return Err(error_response.message);
+        return if let Ok(error_response) = error_response {
+            Err(error_response.message)
         } else {
-            return Err(format!("API error: {}", response.status()));
+            Err(format!("API error: {}", response.status()))
         }
     }
 

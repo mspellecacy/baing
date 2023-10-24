@@ -3,7 +3,6 @@ mod config;
 mod db_helpers;
 mod handlers;
 mod jwt_auth;
-mod model;
 mod response;
 mod token;
 use actix_cors::Cors;
@@ -15,7 +14,6 @@ use llm_chain::executor;
 use llm_chain::options::ModelRef;
 use llm_chain_openai::chatgpt::{Executor, Model};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
-use std::str::FromStr;
 
 pub struct AppState {
     db: Pool<Postgres>,

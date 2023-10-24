@@ -2,9 +2,7 @@ use crate::handlers::filter_user_record;
 use crate::{jwt_auth, AppState};
 use actix_web::{get, patch, web, HttpResponse, Responder};
 use common::model::user::UpdateUserSchema;
-use redis::AsyncCommands;
 use serde_json::json;
-use sqlx::Row;
 
 #[get("/user/me")]
 async fn get_me_handler(jwt_guard: jwt_auth::JwtMiddleware) -> impl Responder {

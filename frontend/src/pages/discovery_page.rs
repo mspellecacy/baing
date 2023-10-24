@@ -5,7 +5,6 @@ use crate::api::discovery_api::{
 };
 use crate::api::tmdb_api;
 use crate::components::figures::{FaceFrown, FaceSmile};
-use crate::components::header::Header;
 use crate::components::media_card::MediaCard;
 use crate::components::media_selector::{MediaSelector, MediaSelectorOption};
 use crate::components::spinner::Spinner;
@@ -13,14 +12,11 @@ use crate::router;
 use crate::store::{set_page_loading, set_show_alert, Store};
 use crate::ui_helpers::get_value_from_input_by_id;
 use common::model::collections::{Media, UserCollection};
-use common::model::core::{Movie, MovieDetails, TvShow};
-use futures::FutureExt;
 use gloo::console::console;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use web_sys::HtmlInputElement;
 use yew::prelude::*;
-use yew::{function_component, html, Html, Properties};
+use yew::{function_component, html, Html};
 use yew_router::hooks::use_navigator;
 use yewdux::functional::use_store;
 
@@ -60,26 +56,25 @@ pub fn discovery_page() -> Html {
 
     let count = 15_i16; // How many Titles we're requesting from the discovery API.
     let discovery_queue = use_state(|| Vec::<Media>::new().to_vec());
-    let collections = use_state(|| store.collections.clone().unwrap_or_else(std::vec::Vec::new));
+    let collections = use_state(|| store.collections.clone().unwrap_or_default());
     let media_selector_option = use_state(|| MediaSelectorOption::Both);
 
-    let do_discovery = |_| {
-        let collections = collections.clone();
+    // Feels ridiculous walking these values down scope? Im not understanding something.
+    let do_discovery = {
         let discovery_queue = discovery_queue.clone();
         let media_selector_value = media_selector_option.clone();
         let dispatch = dispatch.clone();
         let navigator = navigator.clone();
         let key = tmdb_key.unwrap().clone();
 
-        Callback::from(move |event: MouseEvent| {
+        Callback::from(move |_: MouseEvent| {
             let tk = key.to_string();
             let discovery_queue = discovery_queue.clone();
-            let collections = collections.clone();
             let cloned_dispatch = dispatch.clone();
             let msv = media_selector_value.clone();
             let nav = navigator.clone();
-            let q = get_value_from_input_by_id("#discovery_custom_query").unwrap_or(String::from(""));
-
+            let q =
+                get_value_from_input_by_id("#discovery_custom_query").unwrap_or(String::from(""));
 
             wasm_bindgen_futures::spawn_local(async move {
                 set_page_loading(true, &cloned_dispatch);
@@ -126,7 +121,7 @@ pub fn discovery_page() -> Html {
         let collections = collections.clone();
         let media = media.clone();
 
-        Callback::from(move |event: MouseEvent| {
+        Callback::from(move |_: MouseEvent| {
             let media_clone = media.clone();
             if let Some(media) = discovery_queue.get(0) {
                 let cols = collections.clone();
@@ -223,31 +218,31 @@ pub fn discovery_page() -> Html {
 
     html! {
         <>
-            <Header />
+            // <Header />
             <section class="grid justify-items-stretch justify-center">
                 <div class="grid lg:w-[65vw]">
                     <div class="w-3/5 justify-self-center">
                         <div class="text-center pb-2">
                             <h2 class="text-3xl font-bold">{"Discovery Queue"}</h2>
                         </div>
-                        <div class="flex flex-col pb-2">
-                            <div class="flex gap-2 pb-2">
-                                <input
-                                    id="discovery_custom_query"
-                                    class="input input-bordered join-item grow"
-                                    placeholder="(Optional) Custom Query"
-                                    disabled={store.page_loading}
-                                />
-                                <div class="btn join-item" onclick={do_discovery("")}
-                                    disabled={store.page_loading}>
-                                    {"Discover"}
-                                </div>
-                            </div>
+                        <div class="flex flex-col pb-2 gap-2">
+                            <input
+                                id="discovery_custom_query"
+                                class="input input-bordered"
+                                placeholder="(Optional) Query"
+                                disabled={store.page_loading}
+                            />
                             <MediaSelector
                                 default_option={MediaSelectorOption::Both}
                                 on_change={on_change_media_selector}
                                 disabled={store.page_loading}
                             />
+                            <div
+                                class="btn flex-none"
+                                onclick={do_discovery}
+                                disabled={store.page_loading}>
+                                {"Discover"}
+                            </div>
                         </div>
                     </div>
                     if discovery_queue.len() == 0 {

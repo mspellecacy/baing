@@ -1,5 +1,4 @@
 use crate::api::user_api::{api_login_user, api_user_info};
-use crate::components::header::Header;
 use crate::components::{form_input::FormInput, loading_button::LoadingButton};
 use crate::router::{self, Route};
 use crate::store::{set_auth_user, set_page_loading, set_show_alert, Store};
@@ -162,7 +161,7 @@ pub fn login_page() -> Html {
 
     html! {
         <>
-        <Header />
+        // <Header />
         <section class="grid place-items-center">
             <h1 class="text-4xl xl:text-6xl text-center font-[600] mt-4 mb-4">{"Login"}</h1>
             <div class="card w-96 shadow-xl bg-base-200">

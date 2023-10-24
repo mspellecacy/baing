@@ -1,11 +1,7 @@
-pub struct UiHelpers;
-
 use gloo::console::console;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{Event, HtmlElement, HtmlInputElement, InputEvent};
-use yew::{html, Html};
-
 
 pub fn get_id_from_event_elem(e: Event) -> Option<String> {
     let et = e.target().unwrap();
@@ -31,7 +27,7 @@ pub fn set_value_for_input_by_id(id: &str, value: String) {
         console!(format!("{input_elem:?}"));
         if let Some(elem) = input_elem {
             let input = HtmlInputElement::from(JsValue::from(elem));
-            input.set_value(&*value);
+            input.set_value(&value);
         }
     }
 }
@@ -55,3 +51,8 @@ pub fn get_value_from_input_event(e: InputEvent) -> String {
     target.value()
 }
 
+pub fn redirect_to(url: &str) {
+    let window = web_sys::window().expect("Failed to get window object");
+    let location = window.location();
+    let _ = location.set_href(url);
+}

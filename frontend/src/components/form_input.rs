@@ -71,7 +71,7 @@ pub fn form_input_component(props: &Props) -> Html {
         placeholder={props.placeholder.clone().unwrap_or(String::new())}
         class={classes!(
             "input", "input-bordered", "w-full", "max-w-xs",
-            &input_error
+            input_error
         )}
         ref={props.input_ref.clone()}
         onchange={onchange}

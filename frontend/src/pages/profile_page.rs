@@ -1,23 +1,18 @@
 use crate::api::user_api::api_update_user;
-use crate::components::{form_input::FormInput, loading_button::LoadingButton};
-use crate::ui_helpers::UiHelpers;
+use crate::components::{form_input::FormInput};
 use crate::{
     api::user_api::api_user_info,
-    components::header::Header,
     router,
     store::{set_auth_user, set_page_loading, set_show_alert, Store},
 };
 use common::model::user::UserUpdateData;
 use gloo::console::console;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use validator::{Validate, ValidationErrors};
 use wasm_bindgen_futures::spawn_local;
-use web_sys::HtmlInputElement;
-use yew::html::IntoPropValue;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
@@ -65,34 +60,24 @@ pub fn profile_page() -> Html {
     let on_submit = {
         let cloned_form = form.clone();
         let cloned_validation_errors = validation_errors.clone();
-        let cloned_navigator = navigator.clone();
         let cloned_dispatch = dispatch.clone();
 
-        let cloned_name_input_ref = name_input_ref.clone();
-        let cloned_apikey_input_ref = apikey_input_ref.clone();
         Callback::from(move |event: SubmitEvent| {
             let form = cloned_form.clone();
             let validation_errors = cloned_validation_errors.clone();
-            let navigator = cloned_navigator.clone();
             let dispatch = cloned_dispatch.clone();
 
-            let name_input_ref = cloned_name_input_ref.clone();
-            let apikey_input_ref = cloned_apikey_input_ref.clone();
 
             event.prevent_default();
             spawn_local(async move {
                 match form.validate() {
-                    Ok(v) => {
+                    Ok(_) => {
                         let form_data = form.deref().clone();
-                        let form_json = serde_json::to_string(&form_data).unwrap();
                         let user_update = UserUpdateData {
                             name: form_data.name.clone(),
                             tmdb_api_key: form_data.tmdb_api_key.clone(),
                         };
                         set_page_loading(true, &dispatch);
-
-                        let name_input = name_input_ref.cast::<HtmlInputElement>().unwrap();
-                        let apikey_input = apikey_input_ref.cast::<HtmlInputElement>().unwrap();
 
                         let update_response = api_update_user(user_update).await;
                         match update_response {
@@ -140,7 +125,7 @@ pub fn profile_page() -> Html {
                                 role: user.role.to_owned(),
                                 name: user.name.clone(),
                                 verified: user.verified,
-                                tmdb_api_key: user.tmdb_api_key.unwrap_or_else(String::new),
+                                tmdb_api_key: user.tmdb_api_key.unwrap_or_default(),
                             });
                         }
                         Err(e) => {
@@ -160,9 +145,9 @@ pub fn profile_page() -> Html {
 
     html! {
     <>
-      <Header />
+      // <Header />
       <div class="pt-6">
-      if let Some(ref user) = user {
+      if let Some(ref _user) = user {
         <section class="grid place-items-center">
             <div class="card bg-base-200 w-100 shadow-xl text-neutral-content">
                 <div class="card-body">

@@ -2,8 +2,6 @@ use common::model::collections::Media;
 use common::model::core::{Movie, TvShow, TvShowDetails};
 use yew::{function_component, html, Children, Html, Properties};
 
-//struct Details: MovieDetails|TvShowDetails;
-
 struct CardData {
     pub title: String,
     pub subtitle: String,
@@ -16,10 +14,7 @@ impl From<Movie> for CardData {
         CardData {
             title: movie.name,
             subtitle: format!("({})", movie.year),
-            description: match &movie.details {
-                None => None,
-                Some(m) => Some(m.overview.to_owned()),
-            },
+            description: movie.details.as_ref().map(|m| m.overview.to_owned()),
             fig_path: match movie.details {
                 None => None,
                 Some(m) => m.backdrop_path,
@@ -33,10 +28,7 @@ impl From<TvShow> for CardData {
         CardData {
             title: tv_show.name,
             subtitle: format!("({})", tv_show.first_air_date),
-            description: match &tv_show.details {
-                None => None,
-                Some(t) => Some(t.overview.to_owned()),
-            },
+            description: tv_show.details.as_ref().map(|t| t.overview.to_owned()),
             fig_path: match tv_show.details {
                 None => None,
                 Some(t) => t.backdrop_path,

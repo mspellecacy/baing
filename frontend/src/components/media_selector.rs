@@ -1,7 +1,5 @@
 use yew::html::onclick::Event;
 use yew::{function_component, html, use_state, Callback, Html, Properties};
-use yewdux::functional::use_store;
-use crate::store::Store;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum MediaSelectorOption {

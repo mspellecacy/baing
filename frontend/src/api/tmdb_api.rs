@@ -1,6 +1,6 @@
 use common::model::collections::{IsMedia, Media};
 use common::model::core::{Movie, MovieDetails, TvShow, TvShowDetails};
-use common::model::tmdb::{MovieSearch, MovieSearchResult, TvSearch, TvSearchResult};
+use common::model::tmdb::{MovieSearch, TvSearch};
 use gloo::console::console;
 use reqwasm::http;
 use std::error;
@@ -88,19 +88,19 @@ pub async fn tmdb_coalesce_media(
     }
 
     let media_matchup: Vec<_> = media
-        .into_iter()
+        .iter()
         .enumerate()
-        .map(move |(i, mut media)| async move { match_up(key, i, media).await })
+        .map(move |(i, media)| async move { match_up(key, i, media).await })
         .collect();
 
     let matches: Vec<Result<(usize, Media), Box<dyn error::Error>>> =
         futures::future::join_all(media_matchup).await;
 
-    let _ = matches.iter().for_each(|pairing| match pairing {
+    matches.iter().for_each(|pairing| match pairing {
         Ok((i, m)) => out[*i] = m.to_owned(),
         Err(e) => {
             console!(format!("Error Fetching Media Details: {e:?}"));
-            ()
+
         }
     });
 

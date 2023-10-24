@@ -1,5 +1,4 @@
 use crate::response::FilteredUser;
-use actix_web::web;
 use common::model::user::User;
 pub mod ai;
 pub mod auth;

@@ -3,7 +3,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::api::user_api::api_register_user;
-use crate::components::{form_input::FormInput, header::Header, loading_button::LoadingButton};
+use crate::components::{form_input::FormInput, loading_button::LoadingButton};
 use crate::router::{self, Route};
 use crate::store::{set_page_loading, set_show_alert, Store};
 
@@ -176,7 +176,7 @@ pub fn register_page() -> Html {
 
     html! {
     <>
-    <Header />
+    // <Header />
     <section class="py-8 bg-ct-blue-600 min-h-screen grid place-items-center">
       <div class="w-full">
         <h1 class="text-4xl xl:text-6xl text-center font-[600] text-ct-yellow-600 mb-4">

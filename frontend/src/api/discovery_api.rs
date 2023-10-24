@@ -1,12 +1,14 @@
 use crate::api::API_ROOT;
 use common::model::collections::{IsMedia, Media};
-use common::model::core::TvShow;
 use common::model::discovery::{RandomMoviesResponse, RandomTvShowsResponse};
 use gloo::console::console;
 use reqwasm::http;
 use std::ops::Div;
 
-pub async fn api_get_discovery_both_random(mut count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_both_random(
+    mut count: Option<i16>,
+    query: &str,
+) -> Result<Vec<Media>, String> {
     use rand::seq::SliceRandom;
     use rand::thread_rng;
 
@@ -17,9 +19,9 @@ pub async fn api_get_discovery_both_random(mut count: Option<i16>, query: &str) 
     let mut out: Vec<Media> = Vec::new();
 
     // Hurray Fearless Concurrency!
-    let (mut movies, mut shows) = futures::join!(
-        api_get_discovery_movies_random(count, &query),
-        api_get_discovery_tv_shows_random(count, &query)
+    let (movies, shows) = futures::join!(
+        api_get_discovery_movies_random(count, query),
+        api_get_discovery_tv_shows_random(count, query)
     );
 
     if let Ok(mut movies) = movies {
@@ -34,7 +36,10 @@ pub async fn api_get_discovery_both_random(mut count: Option<i16>, query: &str) 
     Ok(out)
 }
 
-pub async fn api_get_discovery_movies_random(count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_movies_random(
+    count: Option<i16>,
+    query: &str,
+) -> Result<Vec<Media>, String> {
     // let mock_response =
     // r#"{
     //     "data": {
@@ -81,10 +86,7 @@ pub async fn api_get_discovery_movies_random(count: Option<i16>, query: &str) ->
     let res_json = response.json::<RandomMoviesResponse>().await;
 
     match res_json {
-        Ok(res) => {
-            //let out = res.data.movies.into_iter().map(|c| Media::Movie(c.clone())).collect();
-            Ok(res.data.movies.into_iter().map(|c| c.as_media()).collect())
-        }
+        Ok(res) => Ok(res.data.movies.into_iter().map(|c| c.as_media()).collect()),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
             Err(format!("Failed to parse API response: {e}"))
@@ -92,7 +94,10 @@ pub async fn api_get_discovery_movies_random(count: Option<i16>, query: &str) ->
     }
 }
 
-pub async fn api_get_discovery_tv_shows_random(count: Option<i16>, query: &str) -> Result<Vec<Media>, String> {
+pub async fn api_get_discovery_tv_shows_random(
+    count: Option<i16>,
+    query: &str,
+) -> Result<Vec<Media>, String> {
     // let mock_response =
     // r#"{
     //     "data":{

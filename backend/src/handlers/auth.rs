@@ -58,30 +58,30 @@ async fn register_user_handler(
 
     match query_result {
         Ok(user) => {
-            let user_id = user.id.clone();
+            let user_id = user.id;
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
                 "user": filter_user_record(&user)
             })});
 
             // Insert some default special collections.
-            let insert_thumbs_up_collection = sqlx::query!(
+            let _insert_thumbs_up_collection = sqlx::query!(
                 r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '👍 Thumbs Up', true, 'private', '{"entries": []}', true, '["Thumbs Up"]', 'thumbsup');"#,
                 user_id
             ).fetch_one(&data.db).await;
-            let insert_thumbs_down_collection = sqlx::query!(
+            let _insert_thumbs_down_collection = sqlx::query!(
                 r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '👎 Thumbs Down', true, 'private', '{"entries": []}', true, '["Thumbs Down"]', 'thumbsdown');"#,
                 user_id
             ).fetch_one(&data.db).await;
-            let insert_skipped_collection = sqlx::query!(
+            let _insert_skipped_collection = sqlx::query!(
                 r#"insert into public.collections (owner_id, name, active, sharing, collection, locked, tags, special) values ($1, '🤔 Skipped', true, 'private', '{"entries": []}', true, '["Skipped"]', 'skipped');"#,
                 user_id
             ).fetch_one(&data.db).await;
 
-            return HttpResponse::Ok().json(user_response);
+            HttpResponse::Ok().json(user_response)
         }
         Err(e) => {
-            return HttpResponse::InternalServerError()
-                .json(serde_json::json!({"status": "error","message": format_args!("{:?}", e)}));
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"status": "error","message": format_args!("{:?}", e)}))
         }
     }
 }
@@ -196,13 +196,6 @@ async fn login_user_handler(
         .max_age(ActixWebDuration::new(data.env.access_token_max_age * 60, 0))
         .http_only(false)
         .finish();
-
-    let json_response = json!({
-        "status":  "success",
-        "data": serde_json::json!({
-            "user": filter_user_record(&user)
-        })
-    });
 
     HttpResponse::Ok()
         .cookie(access_cookie)
