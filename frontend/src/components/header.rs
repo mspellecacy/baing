@@ -43,20 +43,10 @@ pub fn header_component() -> Html {
         })
     };
 
-    let handle_farts = {
-        Callback::from(move |_: MouseEvent| {
-            redirect_to("/login");
-        })
-    };
-
     html! {
         <div class="navbar bg-base-100 lg:justify-center">
             if user.is_some() { // Show links.
                 <div class="justify-center">
-                    <div class="">
-                        <div class="btn" onclick={handle_farts}>{"FARTS!"}</div>
-                    </div>
-                    <div class="divider divider-horizontal"></div>
                     <div class="">
                         <Link<Route> to={Route::HomePage} classes="text-ct-dark-600">
                             {"Home"}
