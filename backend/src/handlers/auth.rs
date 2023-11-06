@@ -8,12 +8,12 @@ use argon2::{
     Argon2,
 };
 
+use crate::response::FilteredUser;
 use common::model::user::{LoginUserSchema, RegisterUserSchema, User};
 use redis::AsyncCommands;
 use serde_json::json;
 use sqlx::Row;
 use uuid::Uuid;
-use crate::response::FilteredUser;
 
 #[get("/healthchecker")]
 async fn health_checker_handler() -> impl Responder {
@@ -80,10 +80,8 @@ async fn register_user_handler(
 
             HttpResponse::Ok().json(user_response)
         }
-        Err(e) => {
-            HttpResponse::InternalServerError()
-                .json(serde_json::json!({"status": "error","message": format_args!("{:?}", e)}))
-        }
+        Err(e) => HttpResponse::InternalServerError()
+            .json(serde_json::json!({"status": "error","message": format_args!("{:?}", e)})),
     }
 }
 

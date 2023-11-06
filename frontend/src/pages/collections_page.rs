@@ -36,34 +36,31 @@ pub fn collections_page() -> Html {
     {
         let collections = collections.clone();
         let dispatch = dispatch.clone();
-        use_effect_with_deps(
-            move |_| {
-                let dispatch = dispatch.clone();
-                wasm_bindgen_futures::spawn_local(async move {
-                    set_page_loading(true, &dispatch);
-                    let response = api_get_user_collections().await;
-                    match response {
-                        Ok(cols) => {
-                            set_page_loading(false, &dispatch);
-                            collections.set(cols.clone());
-                            dispatch.reduce_mut(move |store| {
-                                store.collections = Some(cols);
-                            })
-                        }
-                        Err(e) => {
-                            console!(format!("Error getting user collections: {e}"));
-                            set_page_loading(false, &dispatch);
-                            if e.contains("You are not logged in") {
-                                set_show_alert(e.to_string(), &dispatch);
-                                navigator.push(&router::Route::LoginPage);
-                            }
+        use_effect_with((), move |_| {
+            let dispatch = dispatch.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                set_page_loading(true, &dispatch);
+                let response = api_get_user_collections().await;
+                match response {
+                    Ok(cols) => {
+                        set_page_loading(false, &dispatch);
+                        collections.set(cols.clone());
+                        dispatch.reduce_mut(move |store| {
+                            store.collections = Some(cols);
+                        })
+                    }
+                    Err(e) => {
+                        console!(format!("Error getting user collections: {e}"));
+                        set_page_loading(false, &dispatch);
+                        if e.contains("You are not logged in") {
+                            set_show_alert(e.to_string(), &dispatch);
+                            navigator.push(&router::Route::LoginPage);
                         }
                     }
-                });
-                || ()
-            },
-            (),
-        );
+                }
+            });
+            || ()
+        });
     }
 
     let media_filter = |media: &Media, option: &MediaSelectorOption| -> bool {

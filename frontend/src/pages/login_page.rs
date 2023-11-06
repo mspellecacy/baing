@@ -170,9 +170,9 @@ pub fn login_page() -> Html {
                         class="max-w-md w-full mx-auto overflow-hidden shadow-lg p-8 space-y-5"
                 >
                     <FormInput
+                            input_type="email"
                             label="Email"
                             name="email"
-                            input_type="email"
                             placeholder="your@login.email"
                             input_ref={email_input_ref}
                             handle_onchange={handle_email_input}
@@ -180,9 +180,9 @@ pub fn login_page() -> Html {
                             handle_on_input_blur={Callback::noop()}
                     />
                     <FormInput
+                            input_type="password"
                             label="Password"
                             name="password"
-                            input_type="password"
                             placeholder="Hunter123"
                             input_ref={password_input_ref}
                             handle_onchange={handle_password_input}

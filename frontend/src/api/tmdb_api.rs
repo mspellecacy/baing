@@ -100,7 +100,6 @@ pub async fn tmdb_coalesce_media(
         Ok((i, m)) => out[*i] = m.to_owned(),
         Err(e) => {
             console!(format!("Error Fetching Media Details: {e:?}"));
-
         }
     });
 

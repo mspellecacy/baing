@@ -201,7 +201,6 @@ pub fn discovery_page() -> Html {
         })
     };
 
-
     let on_change_media_selector: Callback<MediaSelectorOption> = {
         let media_selector_option = media_selector_option.clone();
         Callback::from(move |option: MediaSelectorOption| {
