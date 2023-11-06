@@ -1,5 +1,5 @@
 use crate::api::user_api::api_update_user;
-use crate::components::{form_input::FormInput};
+use crate::components::form_input::FormInput;
 use crate::{
     api::user_api::api_user_info,
     router,
@@ -67,7 +67,6 @@ pub fn profile_page() -> Html {
             let validation_errors = cloned_validation_errors.clone();
             let dispatch = cloned_dispatch.clone();
 
-
             event.prevent_default();
             spawn_local(async move {
                 match form.validate() {
@@ -108,39 +107,36 @@ pub fn profile_page() -> Html {
     // Fetch User's profile from backend API.
     {
         let form = form.clone();
-        use_effect_with_deps(
-            move |_| {
-                let dispatch = dispatch.clone();
-                wasm_bindgen_futures::spawn_local(async move {
-                    set_page_loading(true, &dispatch);
-                    let response = api_user_info().await;
-                    match response {
-                        Ok(user) => {
-                            set_page_loading(false, &dispatch);
-                            //set_auth_user(Some(user.clone()), dispatch);
-                            form.set(UpdateUserSchema {
-                                id: user.id.to_string(),
-                                email: user.email.to_owned(),
-                                photo: user.photo.to_owned(),
-                                role: user.role.to_owned(),
-                                name: user.name.clone(),
-                                verified: user.verified,
-                                tmdb_api_key: user.tmdb_api_key.unwrap_or_default(),
-                            });
-                        }
-                        Err(e) => {
-                            set_page_loading(false, &dispatch);
-                            if e.contains("You are not logged in") {
-                                navigator.push(&router::Route::LoginPage);
-                            }
-                            set_show_alert(e.to_string(), &dispatch);
-                        }
+        use_effect_with((), move |_| {
+            let dispatch = dispatch.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                set_page_loading(true, &dispatch);
+                let response = api_user_info().await;
+                match response {
+                    Ok(user) => {
+                        set_page_loading(false, &dispatch);
+                        //set_auth_user(Some(user.clone()), dispatch);
+                        form.set(UpdateUserSchema {
+                            id: user.id.to_string(),
+                            email: user.email.to_owned(),
+                            photo: user.photo.to_owned(),
+                            role: user.role.to_owned(),
+                            name: user.name.clone(),
+                            verified: user.verified,
+                            tmdb_api_key: user.tmdb_api_key.unwrap_or_default(),
+                        });
                     }
-                });
-                || ()
-            },
-            (),
-        );
+                    Err(e) => {
+                        set_page_loading(false, &dispatch);
+                        if e.contains("You are not logged in") {
+                            navigator.push(&router::Route::LoginPage);
+                        }
+                        set_show_alert(e.to_string(), &dispatch);
+                    }
+                }
+            });
+            || ()
+        });
     }
 
     html! {

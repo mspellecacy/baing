@@ -60,7 +60,7 @@ pub async fn api_patch_user_collection(
             Err(error_response.message)
         } else {
             Err(format!("API error: {}", response.status()))
-        }
+        };
     }
 
     let res_json = response.json::<UserCollectionPatchResponse>().await;

@@ -1,4 +1,5 @@
 use crate::components::figures;
+use crate::ui_helpers::redirect_to;
 use crate::{
     api::user_api::api_logout_user,
     router::{self, Route},
@@ -9,7 +10,6 @@ use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use crate::ui_helpers::redirect_to;
 
 #[function_component(Header)]
 pub fn header_component() -> Html {

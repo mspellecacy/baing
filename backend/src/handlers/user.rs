@@ -1,8 +1,8 @@
+use crate::response::FilteredUser;
 use crate::{jwt_auth, AppState};
 use actix_web::{get, patch, web, HttpResponse, Responder};
 use common::model::user::UpdateUserSchema;
 use serde_json::json;
-use crate::response::FilteredUser;
 
 #[get("/user/me")]
 async fn get_me_handler(jwt_guard: jwt_auth::JwtMiddleware) -> impl Responder {

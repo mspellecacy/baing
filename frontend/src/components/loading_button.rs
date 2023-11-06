@@ -4,7 +4,9 @@ use yew::prelude::*;
 #[derive(Debug, Properties, PartialEq)]
 pub struct Props {
     pub loading: bool,
+    #[prop_or(None)]
     pub btn_color: Option<String>,
+    #[prop_or(None)]
     pub text_color: Option<String>,
     pub children: Children,
 }

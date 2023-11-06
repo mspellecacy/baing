@@ -1,11 +1,10 @@
-
 use common::model::collections::{Media, UserCollection};
 use common::model::core::Movie;
 
 use llm_chain::step::Step;
 use llm_chain::{chains, parameters, prompt};
 use llm_chain_openai::chatgpt::Executor;
-use log::{debug};
+use log::debug;
 use std::error;
 
 pub async fn get_random(
