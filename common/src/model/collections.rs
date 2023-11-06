@@ -133,7 +133,7 @@ pub fn extract_special_collection_to_entries(
 ) -> String {
     special_collection
         .iter()
-        .filter(|uc| uc.special.clone().is_some_and(|s| s == special_name))
+        .filter(|uc| uc.special.as_ref().is_some_and(|s| s == special_name))
         .map(|uc| {
             uc.collection
                 .entries

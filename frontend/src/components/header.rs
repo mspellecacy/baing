@@ -35,8 +35,9 @@ pub fn header_component() -> Html {
                         navigator.push(&router::Route::LoginPage);
                     }
                     Err(e) => {
-                        set_show_alert(e.to_string(), &dispatch);
+                        // User's session is invalid, just push them to the login page.
                         set_page_loading(false, &dispatch);
+                        redirect_to("/login");
                     }
                 };
             });
@@ -47,12 +48,12 @@ pub fn header_component() -> Html {
         <div class="navbar bg-base-100 lg:justify-center">
             if user.is_some() { // Show links.
                 <div class="justify-center">
-                    <div class="">
-                        <Link<Route> to={Route::HomePage} classes="text-ct-dark-600">
-                            {"Home"}
-                        </Link<Route>>
-                    </div>
-                    <div class="divider divider-horizontal"></div>
+                    // <div class="">
+                    //     <Link<Route> to={Route::HomePage} classes="text-ct-dark-600">
+                    //         {"Home"}
+                    //     </Link<Route>>
+                    // </div>
+                    // <div class="divider divider-horizontal"></div>
                     <div class="">
                         <Link<Route> to={Route::DiscoveryPage} classes="text-ct-dark-600">{"Discover"}</Link<Route>>
                     </div>
@@ -60,12 +61,11 @@ pub fn header_component() -> Html {
                     <div class="">
                         <div class="dropdown dropdown-end">
                             <label tabindex="0" class="btn btn-ghost btn-square">
-                                {"BA!ng"}
-                                // <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                 // A cute little robot head :)
                                 <figure>
                                     <RoboHead />
                                 </figure>
+                                {"BA!ng"}
                             </label>
                             <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-32">
                                 <li>
@@ -83,37 +83,32 @@ pub fn header_component() -> Html {
                     <div class="">
                         <Link<Route> to={Route::CollectionsPage} classes="text-ct-dark-600">{"Collections"}</Link<Route>>
                     </div>
-                    <div class="divider divider-horizontal"></div>
-                    <div class="">
-                        <Link<Route> to={Route::SchedulesPage} classes="text-ct-dark-600">{"Schedules"}</Link<Route>>
-                    </div>
+                    // <div class="divider divider-horizontal"></div>
+                    // <div class="">
+                    //     <Link<Route> to={Route::SchedulesPage} classes="text-ct-dark-600">{"Schedules"}</Link<Route>>
+                    // </div>
                 </div>
             } else {
                 <div class="">
                     <div class="dropdown dropdown-end">
                         <label tabindex="0" class="btn btn-ghost btn-square">
-                            {"BA!ng"}
-                            // <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                             // A cute little robot head :)
                             <figure>
                                 <RoboHead />
                             </figure>
+                            {"BA!ng"}
                         </label>
                         <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-32">
-
-                            <>
-                                <li>
-                                    <Link<Route> to={Route::RegisterPage} classes="text-ct-dark-600">
-                                        {"Sign Up"}
-                                    </Link<Route>>
-                                </li>
-                                <li>
-                                    <Link<Route> to={Route::LoginPage} classes="text-ct-dark-600">
-                                        {"Login"}
-                                    </Link<Route>>
-                                </li>
-                            </>
-
+                            <li>
+                                <Link<Route> to={Route::RegisterPage} classes="text-ct-dark-600">
+                                    {"Sign Up"}
+                                </Link<Route>>
+                            </li>
+                            <li>
+                                <Link<Route> to={Route::LoginPage} classes="text-ct-dark-600">
+                                    {"Login"}
+                                </Link<Route>>
+                            </li>
                         </ul>
                     </div>
                 </div>

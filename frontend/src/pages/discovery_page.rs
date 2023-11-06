@@ -68,25 +68,26 @@ pub fn discovery_page() -> Html {
         let key = tmdb_key.unwrap().clone();
 
         Callback::from(move |_: MouseEvent| {
+            discovery_queue.set(Vec::new()); // reset the discovery queue
             let tk = key.to_string();
             let discovery_queue = discovery_queue.clone();
             let cloned_dispatch = dispatch.clone();
-            let msv = media_selector_value.clone();
+            let media_selector_value = media_selector_value.clone();
             let nav = navigator.clone();
-            let q =
+            let query =
                 get_value_from_input_by_id("#discovery_custom_query").unwrap_or(String::from(""));
 
             wasm_bindgen_futures::spawn_local(async move {
                 set_page_loading(true, &cloned_dispatch);
-                let discovery_type = match *msv {
+                let discovery_type = match *media_selector_value {
                     MediaSelectorOption::Movies => {
-                        api_get_discovery_movies_random(Some(count), &q).await
+                        api_get_discovery_movies_random(Some(count), &query).await
                     }
                     MediaSelectorOption::TvShows => {
-                        api_get_discovery_tv_shows_random(Some(count), &q).await
+                        api_get_discovery_tv_shows_random(Some(count), &query).await
                     }
                     // Both & None
-                    _ => api_get_discovery_both_random(Some(count), &q).await,
+                    _ => api_get_discovery_both_random(Some(count), &query).await,
                 };
 
                 match discovery_type {
@@ -200,96 +201,110 @@ pub fn discovery_page() -> Html {
         })
     };
 
-    let media_selector_value_clone = media_selector_option.clone();
-    let on_change_media_selector: Callback<MediaSelectorOption> =
-        Callback::from(move |option: MediaSelectorOption| {
-            media_selector_value_clone.set(option);
-        });
 
-    // let on_change_custom_query: Callback<String> = {
-    //     let custom_query_value_clone = custom_query.clone();
-    //     Callback::from(move |_| {
-    //         let input = custom_query_value_clone.cast::<HtmlInputElement>();
-    //         if let Some(input) = input {
-    //             custom_query_value_clone.set(input.value());
-    //         }
-    //     })
-    // };
+    let on_change_media_selector: Callback<MediaSelectorOption> = {
+        let media_selector_option = media_selector_option.clone();
+        Callback::from(move |option: MediaSelectorOption| {
+            media_selector_option.set(option);
+        })
+    };
+
+    enum ShuffleDirection {
+        Right,
+        Left,
+    }
+
+    let on_shuffle = |dir: ShuffleDirection| {
+        let discovery_queue = discovery_queue.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut rot_queue = discovery_queue.to_vec();
+            match dir {
+                ShuffleDirection::Right => rot_queue.rotate_right(1),
+                ShuffleDirection::Left => rot_queue.rotate_left(1),
+            }
+            discovery_queue.set(rot_queue);
+        })
+    };
 
     html! {
-        <>
-            // <Header />
-            <section class="grid justify-items-stretch justify-center">
-                <div class="grid lg:w-[65vw]">
-                    <div class="w-3/5 justify-self-center">
-                        <div class="text-center pb-2">
-                            <h2 class="text-3xl font-bold">{"Discovery Queue"}</h2>
+        <section class="grid justify-items-stretch justify-center">
+            <div class="grid lg:w-[65vw]">
+                <div class="w-3/5 justify-self-center">
+                    <div class="text-center pb-2">
+                        <h2 class="text-3xl font-bold">{"Discovery Queue"}</h2>
+                    </div>
+                    <div class="flex flex-col pb-2 gap-2">
+                        <input
+                            id="discovery_custom_query"
+                            class="input input-bordered"
+                            placeholder="(Optional) Query"
+                            disabled={store.page_loading}
+                        />
+                        <MediaSelector
+                            default_option={MediaSelectorOption::Both}
+                            on_change={on_change_media_selector}
+                            disabled={store.page_loading}
+                        />
+                        <div
+                            class="btn flex-none"
+                            onclick={do_discovery}
+                            disabled={store.page_loading}>
+                            {"Discover"}
                         </div>
-                        <div class="flex flex-col pb-2 gap-2">
-                            <input
-                                id="discovery_custom_query"
-                                class="input input-bordered"
-                                placeholder="(Optional) Query"
-                                disabled={store.page_loading}
-                            />
-                            <MediaSelector
-                                default_option={MediaSelectorOption::Both}
-                                on_change={on_change_media_selector}
-                                disabled={store.page_loading}
-                            />
-                            <div
-                                class="btn flex-none"
-                                onclick={do_discovery}
-                                disabled={store.page_loading}>
-                                {"Discover"}
+                    </div>
+                </div>
+                if discovery_queue.len() == 0 {
+                    <div class="stack w-4/5 grid justify-stretch justify-self-center">
+                        <div class="text-center border border-base-content bg-base-200 card image-full">
+                            <div class="card-body">
+                                <h2 class="card-title place-content-center">
+                                    if store.page_loading {
+                                        <Spinner />
+                                    } else {
+                                        {"Hi! Your discovery queue is empty. 😟"}
+                                    }
+                                </h2>
                             </div>
                         </div>
                     </div>
-                    if discovery_queue.len() == 0 {
-                        <div class="stack w-4/5 grid justify-stretch justify-self-center">
-                            <div class="text-center border border-base-content bg-base-200 card image-full">
-                                <div class="card-body">
-                                    <h2 class="card-title place-content-center">
-                                        if store.page_loading {
-                                            <Spinner />
-                                        } else {
-                                            {"Hi! Your discovery queue is empty. 😟"}
-                                        }
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    } else {
-                        <div class="stack w-4/5 grid justify-stretch justify-self-center">
-                            {
-                                discovery_queue.iter().map(|media| {
-                                    html!{
-                                        <MediaCard media={media.to_owned()}>
-                                            <div class="card-actions justify-around pt-4">
-                                                <button
-                                                    class="basis-1/4 btn btn-outline btn-error"
-                                                    onclick={do_rating(media, DiscoveryRatingOption::DownVote)}>
-                                                    <FaceFrown />
-                                                </button>
-                                                <button
-                                                    class="btn btn-ghost"
-                                                    onclick={do_rating(media, DiscoveryRatingOption::Skip)}>
-                                                    {"Skip"}
-                                                </button>
-                                                <button
-                                                    class="basis-1/4 btn btn-outline btn-success"
-                                                    onclick={do_rating(media, DiscoveryRatingOption::UpVote)}>
-                                                    <FaceSmile />
-                                                </button>
-                                            </div>
-                                        </MediaCard>
-                                    }
-                                }).collect::<Html>()
-                            }
-                        </div>
-                    }
-                </div>
-            </section>
-        </>
+                } else {
+                    <div class="stack w-4/5 grid justify-stretch justify-self-center">
+                        {
+                            discovery_queue.iter().map(|media| {
+                                html!{
+                                    <MediaCard media={media.to_owned()}>
+                                        <div class="card-actions justify-around pt-4">
+                                            <button
+                                                class="basis-1/4 btn btn-outline btn-error"
+                                                onclick={do_rating(media, DiscoveryRatingOption::DownVote)}>
+                                                <FaceFrown />
+                                            </button>
+                                            <button
+                                                class="btn btn-ghost"
+                                                onclick={do_rating(media, DiscoveryRatingOption::Skip)}>
+                                                {"Skip"}
+                                            </button>
+                                            <button
+                                                class="basis-1/4 btn btn-outline btn-success"
+                                                onclick={do_rating(media, DiscoveryRatingOption::UpVote)}>
+                                                <FaceSmile />
+                                            </button>
+                                        </div>
+                                        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                                            <a class="btn btn-ghost" onclick={on_shuffle(ShuffleDirection::Left)}>
+                                                {"❮"}
+                                            </a>
+                                            <a class="btn btn-ghost" onclick={on_shuffle(ShuffleDirection::Right)}>
+                                                {"❯"}
+                                            </a>
+                                        </div>
+                                    </MediaCard>
+                                }
+                            }).collect::<Html>()
+                        }
+                    </div>
+                }
+            </div>
+        </section>
     }
 }
