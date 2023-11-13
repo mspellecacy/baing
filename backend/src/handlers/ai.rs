@@ -2,10 +2,15 @@ use crate::ai::{ai_movie, ai_tv};
 use crate::db_helpers::get_user_special_collections;
 use crate::{jwt_auth, AppState};
 use actix_web::{get, web, HttpResponse, Responder};
+use log::debug;
 
 use serde::Deserialize;
 use serde_json::{json, Value};
 
+// Gpt-4, even though told not to, returns json wrapped in markdown ```json ... ```, breaking serde
+fn strip_markdown(in_value: String) -> String {
+    in_value.replace("```json", "").replace("```", "")
+}
 
 #[derive(Debug, Deserialize)]
 struct DiscoveryQuery {
@@ -40,7 +45,9 @@ async fn get_discovery_movies_rand_n(
     };
 
     let random_movies = match query_type {
-        Ok(res) => {
+        Ok(mut res) => {
+            debug!("AI Response: {res:?}");
+            res = strip_markdown(res);
             let movies = serde_json::from_str::<Value>(res.clone().as_mut_str()).unwrap();
 
             json!({
@@ -84,7 +91,9 @@ async fn get_discovery_tv_shows_rand_n(
     };
 
     let random_tv_shows = match query_type {
-        Ok(res) => {
+        Ok(mut res) => {
+            debug!("AI Response: {res:?}");
+            res = strip_markdown(res);
             let tv_shows = serde_json::from_str::<Value>(res.clone().as_mut_str()).unwrap();
 
             json!({

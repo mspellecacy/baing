@@ -71,15 +71,15 @@ pub fn discovery_page() -> Html {
             discovery_queue.set(Vec::new()); // reset the discovery queue
             let tk = key.to_string();
             let discovery_queue = discovery_queue.clone();
-            let cloned_dispatch = dispatch.clone();
+            let dispatch = dispatch.clone();
             let media_selector_value = media_selector_value.clone();
             let nav = navigator.clone();
             let query =
                 get_value_from_input_by_id("#discovery_custom_query").unwrap_or(String::from(""));
 
             wasm_bindgen_futures::spawn_local(async move {
-                set_page_loading(true, &cloned_dispatch);
-                let discovery_type = match *media_selector_value {
+                set_page_loading(true, &dispatch);
+                let discovery = match *media_selector_value {
                     MediaSelectorOption::Movies => {
                         api_get_discovery_movies_random(Some(count), &query).await
                     }
@@ -90,25 +90,25 @@ pub fn discovery_page() -> Html {
                     _ => api_get_discovery_both_random(Some(count), &query).await,
                 };
 
-                match discovery_type {
-                    Ok(cols) => {
-                        set_page_loading(false, &cloned_dispatch);
-                        let out = match tmdb_api::tmdb_coalesce_media(tk.as_str(), &cols).await {
+                match discovery {
+                    Ok(discovered) => {
+                        set_page_loading(false, &dispatch);
+                        let out = match tmdb_api::tmdb_coalesce_media(tk.as_str(), &discovered).await {
                             Ok(media) => media,
                             Err(e) => {
                                 console!(format!("Error Coalescing with TMDB: {}", e));
-                                cols.to_vec()
+                                discovered.to_vec()
                             }
                         };
 
                         discovery_queue.set(out);
-                        set_page_loading(false, &cloned_dispatch);
+                        set_page_loading(false, &dispatch);
                     }
                     Err(e) => {
                         console!(e.clone());
                         //set_page_loading(false, &cloned_dispatch);
                         if e.contains("You are not logged in") {
-                            set_show_alert(e.to_string(), &cloned_dispatch);
+                            set_show_alert(e.to_string(), &dispatch);
                             nav.push(&router::Route::LoginPage);
                         }
                     }

@@ -32,6 +32,7 @@ async fn main() -> std::io::Result<()> {
 
     let config = Config::init();
 
+    // Setup DB Pool ...
     let pool = match PgPoolOptions::new()
         .max_connections(10)
         .connect(&config.database_url)
@@ -47,6 +48,7 @@ async fn main() -> std::io::Result<()> {
         }
     };
 
+    // Setup Redis ...
     let redis_client = match redis::Client::open(config.redis_url.to_owned()) {
         Ok(client) => {
             println!("✅ Connection to the redis is successful!");
@@ -58,16 +60,13 @@ async fn main() -> std::io::Result<()> {
         }
     };
 
+    // Setup the AI/LLM ...
+    let model = Model::from("gpt-4-1106-preview".parse().unwrap());
     let mut opts_builder = llm_chain::options::Options::builder();
-    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(
-        Model::Gpt35Turbo,
-        //Model::Gpt4,   // Works but is slower, obviously.
-    )));
-
+    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(model)));
     let exec = executor!(chatgpt, opts_builder.build()).unwrap();
 
     println!("🚀 Server started successfully");
-
     HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin(&config.client_origin)
