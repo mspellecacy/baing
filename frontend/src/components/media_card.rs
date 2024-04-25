@@ -1,12 +1,14 @@
 use common::model::collections::Media;
-use common::model::core::{Movie, TvShow, TvShowDetails};
-use yew::{function_component, html, Children, Html, Properties};
+use common::model::core::{DiscoveryMeta, Movie, TvShow, TvShowDetails};
+use yew::{classes, function_component, html, Children, Classes, Html, Properties};
+use crate::components::figures::RoboHead;
 
 struct CardData {
     pub title: String,
     pub subtitle: String,
     pub description: Option<String>,
     pub fig_path: Option<String>,
+    pub baing_reason: Option<String>,
 }
 
 impl From<Movie> for CardData {
@@ -18,6 +20,12 @@ impl From<Movie> for CardData {
             fig_path: match movie.details {
                 None => None,
                 Some(m) => m.backdrop_path,
+            },
+            baing_reason: match movie.baing_meta {
+                None => None,
+                Some(discovery_meta) => {
+                    Some(discovery_meta.reason)
+                }
             },
         }
     }
@@ -32,6 +40,12 @@ impl From<TvShow> for CardData {
             fig_path: match tv_show.details {
                 None => None,
                 Some(t) => t.backdrop_path,
+            },
+            baing_reason: match tv_show.baing_meta {
+                None => None,
+                Some(discovery_meta) => {
+                    Some(discovery_meta.reason)
+                }
             },
         }
     }
@@ -49,6 +63,10 @@ impl From<Media> for CardData {
 #[derive(Clone, PartialEq, Properties)]
 pub struct MediaCardProps {
     pub media: Media,
+    #[prop_or(false)]
+    pub lite: bool,
+    #[prop_or_default]
+    pub class: Classes,
     #[prop_or(Children::default())]
     pub children: Children,
 }
@@ -58,22 +76,50 @@ pub fn media_card(props: &MediaCardProps) -> Html {
     let card_data = CardData::from(props.media.to_owned());
     let fig_base = "https://image.tmdb.org/t/p/w500";
     let details = &props.media;
+    let class = props.class.clone();
+    let mut classes = classes!(
+        "text-center",
+        "bg-clip-content",
+        "border",
+        "border-base-content",
+        "bg-base-200",
+        "card",
+        "image-full",
+        "grow",
+        //"w-3/5",
+        class
+    );
+
+    if props.lite {
+        classes = classes!(classes, "card-lite");
+    }
 
     let card = html! {
-        <div class="text-center border border-base-content bg-base-200 card image-full">
+        <div class={classes}>
             if let Some(fig_path) = card_data.fig_path {
-                <figure><img style="transform: scale(1.25);" class="p-0" src={format!("{fig_base}{fig_path}")} /></figure>
+                <figure><img src={format!("{fig_base}{fig_path}")} /></figure>
             }
-            <div class="card-body">
+            <div class="card-body p-3">
                 <h2 class="card-title">
-                    <div>{card_data.title}</div>
+                    <div><p class="truncate">{card_data.title}</p></div>
                     <div class="text-xs">{card_data.subtitle}</div>
                 </h2>
-                if let Some(desc) = card_data.description {
-                    <p class="h-64 overflow-y-auto">{desc}</p>
-                } else {
-                    <p class="h-64">{"Description Unavailable"}</p>
-                }
+                <div>
+                    <p class="h-64 overflow-auto">
+                        if let Some(desc) = card_data.description {
+                            {desc}
+                        }
+                        if let Some(baing_reason) = card_data.baing_reason {
+                            <div class="divider divider-accent">
+                                // {"BA!ng Insights"}
+                                <figure class="scale-[2.35]">
+                                    <RoboHead />
+                                </figure>
+                            </div>
+                            {baing_reason}
+                        }
+                    </p>
+                </div>
                 { for props.children.iter() }
             </div>
         </div>

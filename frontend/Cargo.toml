@@ -3,22 +3,21 @@ name = "bainger_frontend"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-common = { path = "../common" }
-chrono = { version = "0.4.26", features = ["serde"] }
-gloo = "0.10.0"
+chrono = { version = "0.4.31", features = ["serde"] }
+gloo = "0.11.0"
 gloo-utils = "0.2.0"
 reqwasm = "0.5.0"
-serde = { version = "1.0.185", features = ["derive"] }
-serde_json = "1.0.105"
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = { version = "1.0.111", features = ["raw_value"] }
 validator = { version = "0.16.1", features = ["derive"] }
-wasm-bindgen = "0.2.88"
-wasm-bindgen-futures = "0.4.38"
-web-sys = { version = "0.3.64", features = ["HtmlInputElement", "Window"] }
+wasm-bindgen = "0.2.89"
+wasm-bindgen-futures = "0.4.39"
+web-sys = { version = "0.3.66", features = ["HtmlInputElement", "HtmlSelectElement", "Window"] }
 yew = { version = "0.21.0", features = ["csr"] }
 yew-router = "0.18.0"
-yewdux = "0.9.4"
-futures = "0.3.28"
+yewdux = "0.10.0"
+futures = "0.3.30"
 rand = "0.8.5"
+uuid = { version = "1.6.1", features = ["v4"] }
+common = { path = "../common" }

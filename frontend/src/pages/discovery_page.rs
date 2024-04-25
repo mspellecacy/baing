@@ -19,6 +19,7 @@ use yew::prelude::*;
 use yew::{function_component, html, Html};
 use yew_router::hooks::use_navigator;
 use yewdux::functional::use_store;
+use common::model::core::{DiscoveryMeta, Movie};
 
 #[derive(Debug, Clone)]
 enum DiscoveryRatingOption {
@@ -37,6 +38,7 @@ struct DiscoverySchema {
 pub fn discovery_page() -> Html {
     let (store, dispatch) = use_store::<Store>();
     let navigator = use_navigator().unwrap();
+
     let mut tmdb_key: Option<String> = None;
     {
         if let Some(user) = store.auth_user.clone() {
@@ -53,9 +55,10 @@ pub fn discovery_page() -> Html {
             Some(_) => (),
         }
     }
-
+    // TODO: Make this a user-choice w/ a dropdown. 5~50
+    // How many Titles we're requesting from the discovery API.
     let count = 15_i16; // How many Titles we're requesting from the discovery API.
-    let discovery_queue = use_state(|| Vec::<Media>::new().to_vec());
+    let discovery_queue = use_state(|| Vec::<Media>::new());
     let collections = use_state(|| store.collections.clone().unwrap_or_default());
     let media_selector_option = use_state(|| MediaSelectorOption::Both);
 
@@ -93,13 +96,15 @@ pub fn discovery_page() -> Html {
                 match discovery {
                     Ok(discovered) => {
                         set_page_loading(false, &dispatch);
-                        let out = match tmdb_api::tmdb_coalesce_media(tk.as_str(), &discovered).await {
-                            Ok(media) => media,
-                            Err(e) => {
-                                console!(format!("Error Coalescing with TMDB: {}", e));
-                                discovered.to_vec()
-                            }
-                        };
+
+                        let out =
+                            match tmdb_api::tmdb_coalesce_media(tk.as_str(), &discovered).await {
+                                Ok(mut media) => media,
+                                Err(e) => {
+                                    console!(format!("Error Coalescing with TMDB: {}", e));
+                                    discovered.to_vec()
+                                }
+                            };
 
                         discovery_queue.set(out);
                         set_page_loading(false, &dispatch);
@@ -226,9 +231,9 @@ pub fn discovery_page() -> Html {
     };
 
     html! {
-        <section class="grid justify-items-stretch justify-center">
+        <section class="grid justify-items-stretch justify-center place-content-center">
             <div class="grid lg:w-[65vw]">
-                <div class="w-3/5 justify-self-center">
+                <div class="w-4/5 justify-self-center">
                     <div class="text-center pb-2">
                         <h2 class="text-3xl font-bold">{"Discovery Queue"}</h2>
                     </div>
@@ -267,12 +272,16 @@ pub fn discovery_page() -> Html {
                         </div>
                     </div>
                 } else {
+                //<div class="w-full place-content-center">
                     <div class="stack w-4/5 grid justify-stretch justify-self-center">
                         {
                             discovery_queue.iter().map(|media| {
                                 html!{
                                     <MediaCard media={media.to_owned()}>
                                         <div class="card-actions justify-around pt-4">
+                                            <a class="btn btn-ghost" onclick={on_shuffle(ShuffleDirection::Left)}>
+                                                {"❮"}
+                                            </a>
                                             <button
                                                 class="basis-1/4 btn btn-outline btn-error"
                                                 onclick={do_rating(media, DiscoveryRatingOption::DownVote)}>
@@ -288,11 +297,6 @@ pub fn discovery_page() -> Html {
                                                 onclick={do_rating(media, DiscoveryRatingOption::UpVote)}>
                                                 <FaceSmile />
                                             </button>
-                                        </div>
-                                        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                                            <a class="btn btn-ghost" onclick={on_shuffle(ShuffleDirection::Left)}>
-                                                {"❮"}
-                                            </a>
                                             <a class="btn btn-ghost" onclick={on_shuffle(ShuffleDirection::Right)}>
                                                 {"❯"}
                                             </a>
@@ -302,6 +306,7 @@ pub fn discovery_page() -> Html {
                             }).collect::<Html>()
                         }
                     </div>
+                //</div>
                 }
             </div>
         </section>

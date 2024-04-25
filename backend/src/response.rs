@@ -25,8 +25,8 @@ impl From<User> for FilteredUser {
             photo: user.photo.to_owned(),
             role: user.role.to_owned(),
             verified: user.verified,
-            created_at: user.created_at.unwrap(),
-            updated_at: user.updated_at.unwrap(),
+            created_at: user.created_at.unwrap_or_default(), //.expect("Missing created at?"),
+            updated_at: user.updated_at.unwrap_or_default(), //.expect("Missing update at?"),
             tmdb_api_key: user.tmdb_api_key.to_owned().unwrap_or_default(),
         }
     }

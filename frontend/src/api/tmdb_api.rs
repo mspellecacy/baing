@@ -62,9 +62,11 @@ pub async fn api_tmdb_media_details(
     media: &Media,
 ) -> Result<Media, Box<dyn error::Error>> {
     match media {
-        Media::Movie(m) => Ok(api_tmdb_get_search_movie_details(key, &mut m.clone())
-            .await?
-            .as_media()),
+        Media::Movie(m) => {
+            Ok(api_tmdb_get_search_movie_details(key, &mut m.clone())
+                .await?
+                .as_media())
+        },
         Media::TvShow(t) => Ok(api_tmdb_get_search_tv_show_details(key, &mut t.clone())
             .await?
             .as_media()),
@@ -77,7 +79,7 @@ pub async fn tmdb_coalesce_media(
 ) -> Result<Vec<Media>, Box<dyn error::Error>> {
     let mut out = media.to_owned();
 
-    // Feels a little long winded but this runs all the coalesce requests in parallel regardless
+    // Feels a little long-winded but this runs all the coalesce requests in parallel regardless
     // of the Media type and then pairs them back together.
     async fn match_up(
         key: &str,
@@ -87,17 +89,23 @@ pub async fn tmdb_coalesce_media(
         Ok((index, api_tmdb_media_details(key, media).await?.to_owned()))
     }
 
-    let media_matchup: Vec<_> = media
+    let media_match_up: Vec<_> = media
         .iter()
         .enumerate()
-        .map(move |(i, media)| async move { match_up(key, i, media).await })
+        .map(move |(i, media)| async move {
+
+            match_up(key, i, media).await
+        })
         .collect();
 
     let matches: Vec<Result<(usize, Media), Box<dyn error::Error>>> =
-        futures::future::join_all(media_matchup).await;
+        futures::future::join_all(media_match_up).await;
 
     matches.iter().for_each(|pairing| match pairing {
-        Ok((i, m)) => out[*i] = m.to_owned(),
+        Ok((i, m)) => {
+
+            out[*i] = m.to_owned()
+        },
         Err(e) => {
             console!(format!("Error Fetching Media Details: {e:?}"));
         }

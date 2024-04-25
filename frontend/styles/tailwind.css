@@ -3,3 +3,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+div.card-lite {
+    height: 4em;
+
+    .card-body {
+        padding: .5rem;
+
+        .card-title {
+            flex-direction: column;
+            row-gap: .15rem;
+        }
+        > div {
+            display: none;
+        }
+    }
+
+    > figure {
+        > img {
+            transform: scale(1.25);
+            width: 100%;
+            height: auto;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    }
+}

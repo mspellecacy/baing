@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::model::core::DiscoveryMeta;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MovieSearch {
@@ -50,4 +51,5 @@ pub struct TvSearchResult {
     pub name: String,
     pub vote_average: f64,
     pub vote_count: i64,
+    pub baing_meta: Option<DiscoveryMeta>,
 }

@@ -16,10 +16,18 @@ use llm_chain_openai::chatgpt::{Executor, Model};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 pub struct AppState {
-    db: Pool<Postgres>,
+    pub db: Pool<Postgres>,
     env: Config,
     redis_client: redis::Client,
     chatgpt: Executor,
+}
+
+fn get_ai_executor() -> Executor {
+    let model = Model::from("gpt-4-1106-preview".parse().unwrap());
+    let mut opts_builder = llm_chain::options::Options::builder();
+    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(model)));
+
+    executor!(chatgpt, opts_builder.build()).unwrap()
 }
 
 #[actix_web::main]
@@ -61,10 +69,7 @@ async fn main() -> std::io::Result<()> {
     };
 
     // Setup the AI/LLM ...
-    let model = Model::from("gpt-4-1106-preview".parse().unwrap());
-    let mut opts_builder = llm_chain::options::Options::builder();
-    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(model)));
-    let exec = executor!(chatgpt, opts_builder.build()).unwrap();
+    let exec = get_ai_executor();
 
     println!("🚀 Server started successfully");
     HttpServer::new(move || {

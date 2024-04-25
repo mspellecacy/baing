@@ -4,6 +4,7 @@ use common::model::discovery::{RandomMoviesResponse, RandomTvShowsResponse};
 use gloo::console::console;
 use reqwasm::http;
 use std::ops::Div;
+use common::model::core::{DiscoveryMeta, TvShow};
 
 pub async fn api_get_discovery_both_random(
     mut count: Option<i16>,
@@ -134,6 +135,11 @@ pub async fn api_get_discovery_tv_shows_random(
     //
     // let res_json:Result<RandomTvShowsResponse, _> = serde_json::from_str(mock_response);
 
+
+    // let mut baing_meta = DiscoveryMeta {
+    //     discovery_query: query.to_string(),
+    //     discovery_reason: "".to_string(),
+    // }
     let title_count = count.unwrap_or(25);
     let response = match http::Request::get(&format!(
         "{}/discovery/tv-shows/rand/{}?query={}",
@@ -150,12 +156,26 @@ pub async fn api_get_discovery_tv_shows_random(
     let res_json = response.json::<RandomTvShowsResponse>().await;
 
     match res_json {
-        Ok(res) => Ok(res
-            .data
-            .tv_shows
-            .into_iter()
-            .map(|c| c.as_media())
-            .collect()),
+        Ok(res) => {
+            // for media in &res.data.tv_shows {
+            //     match &media.as_media() {
+            //         Media::Movie(m) => { console!(format!("{:?}", &m.baing_meta)); }
+            //         Media::TvShow(t) => { console!(format!("{:?}", &t.baing_meta)); }
+            //     }
+            // }
+
+            for show in &res.data.tv_shows {
+                console!(format!("{:?}", &show.baing_meta));
+            }
+
+            Ok(res
+                .data
+                .tv_shows
+                .into_iter()
+                .map(|c| c.as_media())
+                .collect())
+        },
+        //Ok(res) => Ok(res.data.tv_shows.clone()),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
             Err(format!("Failed to parse API response: {e}"))

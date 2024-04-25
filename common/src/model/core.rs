@@ -6,6 +6,7 @@ pub struct Movie {
     pub name: String,
     pub year: i32,
     pub details: Option<MovieDetails>,
+    pub baing_meta: Option<DiscoveryMeta>,
 }
 
 impl Default for Movie {
@@ -14,6 +15,7 @@ impl Default for Movie {
             name: "".to_string(),
             year: 0,
             details: None,
+            baing_meta: None,
         }
     }
 }
@@ -60,6 +62,7 @@ pub struct TvShow {
     pub first_air_date: String,
     pub language: String,
     pub details: Option<TvShowDetails>,
+    pub baing_meta: Option<DiscoveryMeta>,
 }
 
 impl Default for TvShow {
@@ -69,6 +72,7 @@ impl Default for TvShow {
             first_air_date: "".to_string(),
             language: "".to_string(),
             details: None,
+            baing_meta: None,
         }
     }
 }
@@ -89,6 +93,13 @@ pub struct TvShowDetails {
     pub name: String,
     pub vote_average: f64,
     pub vote_count: i64,
+
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DiscoveryMeta {
+    pub query: String,
+    pub reason: String,
 }
 
 // Basic copy of the results value, because I prefer these somewhat uncoupled in the long run.

@@ -189,23 +189,19 @@ pub fn login_page() -> Html {
                             errors={&*validation_errors}
                             handle_on_input_blur={Callback::noop()}
                     />
-                    // TODO: Actually implement password reset...
-                    <div class="text-right"></div>
-                    <LoadingButton
-                            loading={store.page_loading}
-                            text_color={Some("text-ct-blue-600".to_string())}
-                    >
-                        {"Login"}
-                    </LoadingButton>
-                    <div class="divider pb-4">
-
-                        {"!"}
+                    <div class="m-0">
+                        <button class="btn btn-block" type="submit">{"Login"}</button>
+                        <br />
+                        <button class="btn btn-ghost btn-block">
+                            <Link<Route> to={Route::RegisterPage} classes="text-ct-dark-600">
+                                {"Sign Up"}
+                            </Link<Route>>
+                        </button>
                     </div>
-
-                    <Link<Route> to={Route::RegisterPage} classes="text-ct-blue-600">{"Need an account?"}</Link<Route>>
-                    <br />
+                    // TODO: Actually implement password reset...
+                    <div class="divider divider-warning pb-4">{"!"}</div>
                     <a class="pt-4" href="#">
-                    {"//TODO: Forgot Password?"}
+                        {"//TODO: Forgot Password?"}
                     </a>
                 </form>
             </div>

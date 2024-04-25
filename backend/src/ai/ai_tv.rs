@@ -1,4 +1,3 @@
-
 use common::model::collections::{Media, UserCollection};
 use common::model::core::TvShow;
 use llm_chain::step::Step;
@@ -32,7 +31,7 @@ pub async fn get_random(
     );
 
     let main_prompt = "You are bAIng, an AI assistant that helps create curated lists of TV shows and Movies. You respond only with JSON.";
-    let message = format!("Return a diverse collections of {count} Television Shows from the past 60 years in the form a JSON Array named 'tv_shows' with the fields 'name' containing the name of the tv show as a string, and 'first_air_date' containing the year month day in YYYY-MM-DD format of the tv show's original air date as a String, and 'language' the country of the tv show's origin as a i18n-locale String. Take the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
+    let message = format!("Return a diverse collections of {count} Television Shows from the past 60 years in the form a JSON Array named 'tv_shows' with the fields 'name' containing the name of the tv show as a string, and 'first_air_date' containing the year month day in YYYY-MM-DD format of the tv show's original air date as a String, 'language' the country of the tv show's origin as a i18n-locale String, and 'baing_meta' containing an object with two sub fields 'reason' containing the reason this title was chosen, and 'query' containing a copy of the original user prompt. Take the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
     debug!("Debug | OpenAI Request: {}", &message);
 
     let chain = chains::conversation::Chain::new(llm_chain::prompt!(system: main_prompt));
@@ -70,7 +69,7 @@ pub async fn get_guided(
     );
 
     let main_prompt = "You are bAIng, an AI assistant that helps create curated lists of TV shows and Movies. You respond only with JSON.";
-    let message = format!("Return a collections of {count} Television Shows based on User's Prompt in the form a JSON Array named 'tv_shows' with the fields 'name' containing the name of the tv show as a string, and 'first_air_date' containing the year month day in YYYY-MM-DD format of the tv show's original air date as a String, and 'language' the country of the tv show's origin as a i18n-locale String. \n User's Prompt: {prompt} \nTake the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
+    let message = format!("Return a collections of {count} Television Shows based on User's Prompt in the form a JSON Array named 'tv_shows' with the fields 'name' containing the name of the tv show as a string, and 'first_air_date' containing the year month day in YYYY-MM-DD format of the tv show's original air date as a String, 'language' the country of the tv show's origin as a i18n-locale String, and 'baing_meta' containing an object with two sub fields 'reason' containing the reason this title was chosen, and 'query' containing a copy of the original user prompt. \n User's Prompt: {prompt} \nTake the following collections of titles into consideration when making you recommendations but do not include any of them with your final output: Titles they disliked: {unliked_list} \n Titles they liked: {liked_list} \n Title they skipped: {skipped_list}");
     debug!("Debug | OpenAI Request: {}", &message);
 
     let chain = chains::conversation::Chain::new(llm_chain::prompt!(system: main_prompt));

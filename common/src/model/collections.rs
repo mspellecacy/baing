@@ -1,7 +1,7 @@
 use crate::model::core::{Movie, TvShow};
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
-use sqlx::types::JsonValue;
+use serde_json::Value;
 use std::fmt::{Display, Formatter};
 use std::mem;
 use uuid::Uuid;
@@ -77,8 +77,8 @@ pub struct MediaCollection {
     pub entries: Vec<Media>,
 }
 
-impl From<Option<JsonValue>> for MediaCollection {
-    fn from(value: Option<JsonValue>) -> Self {
+impl From<Option<Value>> for MediaCollection {
+    fn from(value: Option<Value>) -> Self {
         if let Some(json_value) = value {
             match serde_json::from_value(json_value.clone()) {
                 Ok(val) => val,
@@ -105,7 +105,7 @@ pub struct UserCollection {
     pub sharing: Option<String>,
     pub collection: MediaCollection,
     pub locked: bool,
-    pub tags: JsonValue,
+    pub tags: Value,
     pub special: Option<String>,
 }
 

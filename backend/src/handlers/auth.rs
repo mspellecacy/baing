@@ -80,6 +80,7 @@ async fn register_user_handler(
 
             HttpResponse::Ok().json(user_response)
         }
+
         Err(e) => HttpResponse::InternalServerError()
             .json(serde_json::json!({"status": "error","message": format_args!("{:?}", e)})),
     }

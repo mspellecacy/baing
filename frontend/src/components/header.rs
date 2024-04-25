@@ -45,7 +45,7 @@ pub fn header_component() -> Html {
     };
 
     html! {
-        <div class="navbar bg-base-100 lg:justify-center">
+        <div class="navbar bg-base-100 justify-center">
             if user.is_some() { // Show links.
                 <div class="justify-center">
                     // <div class="">
@@ -62,9 +62,9 @@ pub fn header_component() -> Html {
                         <div class="dropdown dropdown-end">
                             <label tabindex="0" class="btn btn-ghost btn-square">
                                 // A cute little robot head :)
-                                <figure>
-                                    <RoboHead />
-                                </figure>
+                                // <figure>
+                                //     <RoboHead />
+                                // </figure>
                                 {"BA!ng"}
                             </label>
                             <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-32">
@@ -93,9 +93,9 @@ pub fn header_component() -> Html {
                     <div class="dropdown dropdown-end">
                         <label tabindex="0" class="btn btn-ghost btn-square">
                             // A cute little robot head :)
-                            <figure>
-                                <RoboHead />
-                            </figure>
+                            // <figure>
+                            //     <RoboHead />
+                            // </figure>
                             {"BA!ng"}
                         </label>
                         <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-32">
