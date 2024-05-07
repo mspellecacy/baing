@@ -1,7 +1,7 @@
-use common::model::collections::Media;
-use common::model::core::{DiscoveryMeta, Movie, TvShow, TvShowDetails};
-use yew::{classes, function_component, html, Children, Classes, Html, Properties};
 use crate::components::figures::RoboHead;
+use common::model::collections::Media;
+use common::model::core::{DiscoveryMeta, Movie, TvShow, TvShowDetails, YTChannel};
+use yew::{classes, function_component, html, Children, Classes, Html, Properties};
 
 struct CardData {
     pub title: String,
@@ -23,9 +23,7 @@ impl From<Movie> for CardData {
             },
             baing_reason: match movie.baing_meta {
                 None => None,
-                Some(discovery_meta) => {
-                    Some(discovery_meta.reason)
-                }
+                Some(discovery_meta) => Some(discovery_meta.reason),
             },
         }
     }
@@ -43,9 +41,25 @@ impl From<TvShow> for CardData {
             },
             baing_reason: match tv_show.baing_meta {
                 None => None,
-                Some(discovery_meta) => {
-                    Some(discovery_meta.reason)
-                }
+                Some(discovery_meta) => Some(discovery_meta.reason),
+            },
+        }
+    }
+}
+
+impl From<YTChannel> for CardData {
+    fn from(channel: YTChannel) -> Self {
+        CardData {
+            title: channel.name,
+            subtitle: "".to_string(),
+            description: Some(channel.description),
+            fig_path: match channel.details {
+                None => None,
+                Some(m) => m.backdrop_path,
+            },
+            baing_reason: match channel.baing_meta {
+                None => None,
+                Some(discovery_meta) => Some(discovery_meta.reason),
             },
         }
     }
@@ -56,6 +70,8 @@ impl From<Media> for CardData {
         match media {
             Media::Movie(m) => CardData::from(m),
             Media::TvShow(t) => CardData::from(t),
+            Media::YTChannel(c) => CardData::from(c),
+            _ => unreachable!("Unsupported media type")
         }
     }
 }

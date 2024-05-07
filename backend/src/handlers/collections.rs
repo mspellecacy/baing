@@ -76,7 +76,7 @@ async fn get_user_collections_handler(
 #[patch("/collection/{id}")]
 async fn patch_user_collection_handler(
     jwt_guard: jwt_auth::JwtMiddleware,
-    path: web::Path<Uuid>,
+    _path: web::Path<Uuid>,
     body: web::Json<UserCollection>,
     data: web::Data<AppState>,
 ) -> impl Responder {

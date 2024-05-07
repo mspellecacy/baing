@@ -1,9 +1,6 @@
 use crate::api::collections_api::api_patch_user_collection;
-use crate::api::discovery_api::{
-    api_get_discovery_both_random, api_get_discovery_movies_random,
-    api_get_discovery_tv_shows_random,
-};
-use crate::api::tmdb_api;
+use crate::api::discovery_api::{api_get_discovery_both_random, api_get_discovery_movies_random, api_get_discovery_tv_shows_random, api_get_discovery_yt_channels_random};
+use crate::api::{tmdb_api, coalesce_media};
 use crate::components::figures::{FaceFrown, FaceSmile};
 use crate::components::media_card::MediaCard;
 use crate::components::media_selector::{MediaSelector, MediaSelectorOption};
@@ -12,6 +9,7 @@ use crate::router;
 use crate::store::{set_page_loading, set_show_alert, Store};
 use crate::ui_helpers::get_value_from_input_by_id;
 use common::model::collections::{Media, UserCollection};
+use common::model::core::{DiscoveryMeta, Movie};
 use gloo::console::console;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -19,7 +17,6 @@ use yew::prelude::*;
 use yew::{function_component, html, Html};
 use yew_router::hooks::use_navigator;
 use yewdux::functional::use_store;
-use common::model::core::{DiscoveryMeta, Movie};
 
 #[derive(Debug, Clone)]
 enum DiscoveryRatingOption {
@@ -60,7 +57,7 @@ pub fn discovery_page() -> Html {
     let count = 15_i16; // How many Titles we're requesting from the discovery API.
     let discovery_queue = use_state(|| Vec::<Media>::new());
     let collections = use_state(|| store.collections.clone().unwrap_or_default());
-    let media_selector_option = use_state(|| MediaSelectorOption::Both);
+    let media_selector_option = use_state(|| MediaSelectorOption::All);
 
     // Feels ridiculous walking these values down scope? Im not understanding something.
     let do_discovery = {
@@ -89,6 +86,9 @@ pub fn discovery_page() -> Html {
                     MediaSelectorOption::TvShows => {
                         api_get_discovery_tv_shows_random(Some(count), &query).await
                     }
+                    MediaSelectorOption::YTChannel => {
+                        api_get_discovery_yt_channels_random(Some(count), &query).await
+                    }
                     // Both & None
                     _ => api_get_discovery_both_random(Some(count), &query).await,
                 };
@@ -98,7 +98,7 @@ pub fn discovery_page() -> Html {
                         set_page_loading(false, &dispatch);
 
                         let out =
-                            match tmdb_api::tmdb_coalesce_media(tk.as_str(), &discovered).await {
+                            match coalesce_media(tk.as_str(), &discovered).await {
                                 Ok(mut media) => media,
                                 Err(e) => {
                                     console!(format!("Error Coalescing with TMDB: {}", e));
@@ -245,7 +245,7 @@ pub fn discovery_page() -> Html {
                             disabled={store.page_loading}
                         />
                         <MediaSelector
-                            default_option={MediaSelectorOption::Both}
+                            default_option={MediaSelectorOption::All}
                             on_change={on_change_media_selector}
                             disabled={store.page_loading}
                         />

@@ -23,7 +23,6 @@ struct LoginUserSchema {
     )]
     email: String,
     #[validate(
-        length(min = 1, message = "Password is required"),
         length(min = 6, message = "Password must be at least 6 characters")
     )]
     password: String,

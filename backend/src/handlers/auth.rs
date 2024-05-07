@@ -144,7 +144,7 @@ async fn login_user_handler(
         }
     };
 
-    let mut redis_client = match data.redis_client.get_async_connection().await {
+    let mut redis_client = match data.redis_client.get_multiplexed_async_connection().await {
         Ok(redis_client) => redis_client,
         Err(e) => {
             return HttpResponse::InternalServerError()
@@ -156,7 +156,7 @@ async fn login_user_handler(
         .set_ex(
             access_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            (data.env.access_token_max_age * 60) as usize,
+            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
         )
         .await;
 
@@ -169,7 +169,7 @@ async fn login_user_handler(
         .set_ex(
             refresh_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            (data.env.refresh_token_max_age * 60) as usize,
+            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
         )
         .await;
 
@@ -230,7 +230,7 @@ async fn refresh_access_token_handler(
             }
         };
 
-    let result = data.redis_client.get_async_connection().await;
+    let result = data.redis_client.get_multiplexed_async_connection().await;
     let mut redis_client = match result {
         Ok(redis_client) => redis_client,
         Err(e) => {
@@ -280,7 +280,7 @@ async fn refresh_access_token_handler(
         .set_ex(
             access_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            (data.env.access_token_max_age * 60) as usize,
+            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
         )
         .await;
 
@@ -335,7 +335,7 @@ async fn logout_handler(
             }
         };
 
-    let mut redis_client = data.redis_client.get_async_connection().await.unwrap();
+    let mut redis_client = data.redis_client.get_multiplexed_async_connection().await.unwrap();
     let redis_result: redis::RedisResult<usize> = redis_client
         .del(&[
             refresh_token_details.token_uuid.to_string(),

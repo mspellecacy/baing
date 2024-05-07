@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::model::core::DiscoveryMeta;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MovieSearch {

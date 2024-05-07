@@ -7,22 +7,22 @@ edition = "2021"
 
 [dependencies]
 actix-cors = "0.7.0"
-actix-web = "4.3.1"
-argon2 = "0.5.1"
-base64 = "0.22.0"
-chrono = { version = "0.4.26", features = ["serde"] }
+actix-web = "4.5.1"
+argon2 = "0.5.2"
+base64 = "0.22.1"
+chrono = { version = "0.4.38", features = ["serde"] }
 dotenv = "0.15.0"
 env_logger = "0.11.3"
-futures = "0.3.28"
-futures-util = "0.3.28"
+futures = "0.3.30"
+futures-util = "0.3.30"
 jsonwebtoken = "9.3.0"
 rand_core = { version = "0.6.4", features = ["std"] }
-redis = { version = "0.23.2", features = ["tokio-comp"] }
-serde = { version = "1.0.185", features = ["derive"] }
-serde_json = { version = "1.0.110", features = ["raw_value"] }
-sqlx = { version = "0.7.3", features = ["runtime-async-std-native-tls", "postgres", "chrono", "uuid"] }
-uuid = { version = "1.4.1", features = ["serde", "v4"] }
+redis = { version = "0.25.3", features = ["tokio-comp"] }
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = { version = "1.0.111", features = ["raw_value"] }
+sqlx = { version = "0.7.4", features = ["runtime-async-std-native-tls", "postgres", "chrono", "uuid"] }
+uuid = { version = "1.8.0", features = ["serde", "v4"] }
 llm-chain = "0.13.0"
 llm-chain-openai = "0.13.0"
 common = { path = "../common" }
-log = { version = "0.4.20", features = [] }
+log = { version = "0.4.21", features = [] }

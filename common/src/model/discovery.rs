@@ -1,4 +1,4 @@
-use crate::model::core::{Movie, TvShow};
+use crate::model::core::{Movie, TvShow, YTChannel};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -21,4 +21,15 @@ pub struct RandomTvShowsResponseData {
 pub struct RandomTvShowsResponse {
     pub status: String,
     pub data: RandomTvShowsResponseData,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RandomYTChannelsResponseData {
+    pub yt_channels: Vec<YTChannel>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RandomYTChannelsResponse {
+    pub status: String,
+    pub data: RandomYTChannelsResponseData,
 }

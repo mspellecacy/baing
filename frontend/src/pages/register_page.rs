@@ -21,13 +21,12 @@ struct RegisterUserSchema {
     #[validate(length(min = 1, message = "Name is required"))]
     name: String,
     #[validate(
-        length(min = 1, message = "Email is required"),
+        length(min = 3, message = "Email is required"),
         email(message = "Email is invalid")
     )]
     email: String,
     #[validate(
-        length(min = 1, message = "Password is required"),
-        length(min = 6, message = "Password must be at least 6 characters")
+                length(min = 6, message = "Password must be at least 6 characters")
     )]
     password: String,
     #[validate(

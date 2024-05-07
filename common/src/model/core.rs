@@ -1,6 +1,12 @@
 use crate::model::tmdb::{MovieSearchResult, TvSearchResult};
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DiscoveryMeta {
+    pub query: String,
+    pub reason: String,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub struct Movie {
     pub name: String,
@@ -93,13 +99,6 @@ pub struct TvShowDetails {
     pub name: String,
     pub vote_average: f64,
     pub vote_count: i64,
-
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct DiscoveryMeta {
-    pub query: String,
-    pub reason: String,
 }
 
 // Basic copy of the results value, because I prefer these somewhat uncoupled in the long run.
@@ -122,4 +121,36 @@ impl From<TvSearchResult> for TvShowDetails {
             vote_count: value.vote_count,
         }
     }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+pub struct YTChannel {
+    pub name: String,
+    pub description: String,
+    pub channel_id: String,
+    pub language: String,
+    pub details: Option<YTChannelDetails>,
+    pub baing_meta: Option<DiscoveryMeta>,
+}
+
+impl Default for YTChannel {
+    fn default() -> Self {
+        Self {
+            name: "".to_string(),
+            description: "".to_string(),
+            channel_id: "".to_string(),
+            language: "".to_string(),
+            details: None,
+            baing_meta: None,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+pub struct YTChannelDetails {
+    pub backdrop_path: Option<String>,
+    pub original_language: String,
+    pub original_title: String,
+    pub overview: String,
+    pub popularity: f64,
 }

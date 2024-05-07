@@ -21,6 +21,7 @@ fn media_item(media: Media) -> Html {
     let li = match media {
         Media::Movie(movie) => format!("📽️ {movie}"),
         Media::TvShow(tv_show) => format!("📺 {tv_show}"),
+        Media::YTChannel(yt_channel) => format!("▶️ {yt_channel}")
     };
 
     html! {<li>{li}</li>}
@@ -35,7 +36,7 @@ pub fn collections_page() -> Html {
         navigator.push(&router::Route::LoginPage);
     }
     let collections = use_state(|| store.collections.clone().unwrap_or_default());
-    let media_selector_option = use_state(|| MediaSelectorOption::Both);
+    let media_selector_option = use_state(|| MediaSelectorOption::All);
     let active_col: UseStateHandle<Option<UserCollection>> = use_state(|| None);
 
     {
@@ -145,7 +146,7 @@ pub fn collections_page() -> Html {
                                     <>
                                         <div class="grow pb-2 pt-2">
                                             <MediaSelector
-                                                default_option={MediaSelectorOption::Both}
+                                                default_option={MediaSelectorOption::All}
                                                 on_change={&on_change_media_selector}
                                             />
                                         </div>
