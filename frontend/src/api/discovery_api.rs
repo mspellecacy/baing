@@ -175,46 +175,46 @@ pub async fn api_get_discovery_yt_channels_random(
     count: Option<i16>,
     query: &str,
 ) -> Result<Vec<Media>, String> {
-    // let mock_response =
-    // r#"{
-    //     "status": "success",
-    //     "data": {
-    //         "yt_channels": [
-    //             {
-    //               "name": "Good Mythical Morning",
-    //               "channel_id": "UC4PooiX37Pld1T8J5SYT-SQ",
-    //               "description": "Join Rhett and Link for mythical adventures in this comedic variety show filled with bizarre challenges, food experiments, and comedic sketches.",
-    //               "language": "en-US",
-    //               "baing_meta": {
-    //                 "reason": "Offers diverse content suitable for watching with family, including short-format episodes.",
-    //                 "query": "Channels that I can watch with my mother that have shorter 15 minute content."
-    //               }
-    //             },
-    //             {
-    //               "name": "BuzzFeedVideo",
-    //               "channel_id": "UCpko_-a4wgz2u_DgDgd9fqA",
-    //               "description": "BuzzFeed's flagship channel featuring tasty recipes, funny sketches, challenges, and more, perfect for quick entertainment with family.",
-    //               "language": "en-US",
-    //               "baing_meta": {
-    //                 "reason": "Offers a variety of short-format entertainment suitable for watching with family.",
-    //                 "query": "Channels that I can watch with my mother that have shorter 15 minute content."
-    //               }
-    //             },
-    //             {
-    //               "name": "Tasty",
-    //               "channel_id": "UCJFp8uSYCjXOMnkUyb3CQ3Q",
-    //               "description": "Delicious recipes, food hacks, and cooking challenges presented in short, visually appealing videos perfect for family cooking sessions.",
-    //               "language": "en-US",
-    //               "baing_meta": {
-    //                 "reason": "Provides quick, family-friendly cooking content in short-format videos.",
-    //                 "query": "Channels that I can watch with my mother that have shorter 15 minute content."
-    //               }
-    //           }
-    //         ]
-    //     }
-    // }"#;
-    //
-    // let res_json:Result<RandomYTChannelsResponse, _> = serde_json::from_str(mock_response);
+    let mock_response =
+    r#"{
+        "status": "success",
+        "data": {
+            "yt_channels": [
+                {
+                  "name": "Good Mythical Morning",
+                  "channel_id": "UC4PooiX37Pld1T8J5SYT-SQ",
+                  "description": "Join Rhett and Link for mythical adventures in this comedic variety show filled with bizarre challenges, food experiments, and comedic sketches.",
+                  "language": "en-US",
+                  "baing_meta": {
+                    "reason": "Offers diverse content suitable for watching with family, including short-format episodes.",
+                    "query": "Channels that I can watch with my mother that have shorter 15 minute content."
+                  }
+                },
+                {
+                  "name": "BuzzFeedVideo",
+                  "channel_id": "UCpko_-a4wgz2u_DgDgd9fqA",
+                  "description": "BuzzFeed's flagship channel featuring tasty recipes, funny sketches, challenges, and more, perfect for quick entertainment with family.",
+                  "language": "en-US",
+                  "baing_meta": {
+                    "reason": "Offers a variety of short-format entertainment suitable for watching with family.",
+                    "query": "Channels that I can watch with my mother that have shorter 15 minute content."
+                  }
+                },
+                {
+                  "name": "Tasty",
+                  "channel_id": "UCJFp8uSYCjXOMnkUyb3CQ3Q",
+                  "description": "Delicious recipes, food hacks, and cooking challenges presented in short, visually appealing videos perfect for family cooking sessions.",
+                  "language": "en-US",
+                  "baing_meta": {
+                    "reason": "Provides quick, family-friendly cooking content in short-format videos.",
+                    "query": "Channels that I can watch with my mother that have shorter 15 minute content."
+                  }
+              }
+            ]
+        }
+    }"#;
+
+    //let res_json:Result<RandomYTChannelsResponse, _> = serde_json::from_str(mock_response);
     // let mut baing_meta = DiscoveryMeta {
     //     discovery_query: query.to_string(),
     //     discovery_reason: "".to_string(),

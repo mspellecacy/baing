@@ -65,7 +65,10 @@ pub fn discovery_page() -> Html {
         let media_selector_value = media_selector_option.clone();
         let dispatch = dispatch.clone();
         let navigator = navigator.clone();
-        let key = tmdb_key.unwrap().clone();
+        let key = tmdb_key.unwrap_or_else(|| {
+            navigator.push(&router::Route::LoginPage);
+            "".to_string()
+        }).clone();
 
         Callback::from(move |_: MouseEvent| {
             discovery_queue.set(Vec::new()); // reset the discovery queue

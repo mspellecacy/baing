@@ -23,7 +23,7 @@ pub struct AppState {
 }
 
 fn get_ai_executor() -> Executor {
-    let model = Model::from("gpt-4-1106-preview".parse().unwrap());
+    let model = Model::from("gpt-4".parse().unwrap());
     let mut opts_builder = llm_chain::options::Options::builder();
     opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(model)));
 

@@ -2,6 +2,7 @@ use std::error;
 use gloo::console::console;
 use common::model::collections::{IsMedia, Media};
 use crate::api::tmdb_api::{api_tmdb_get_search_movie_details, api_tmdb_get_search_tv_show_details};
+use crate::api::youtube_api::api_yt_channel_details;
 
 pub mod collections_api;
 pub mod discovery_api;
@@ -23,8 +24,12 @@ pub async fn get_media_details(
         Media::TvShow(t) => Ok(api_tmdb_get_search_tv_show_details(key, &mut t.clone())
             .await?
             .as_media()),
+        // Media::YTChannel(c) => {
+        //     Ok(api_yt_channel_details(&mut c.clone())
+        //         .await?
+        //         .as_media())
+        // },
         Media::YTChannel(c) => Ok(c.as_media()),
-
         //_ => unreachable!("Unsupported Media Type")
     }
 }
