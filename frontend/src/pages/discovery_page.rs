@@ -1,6 +1,9 @@
 use crate::api::collections_api::api_patch_user_collection;
-use crate::api::discovery_api::{api_get_discovery_both_random, api_get_discovery_movies_random, api_get_discovery_tv_shows_random, api_get_discovery_yt_channels_random};
-use crate::api::{tmdb_api, coalesce_media};
+use crate::api::discovery_api::{
+    api_get_discovery_both_random, api_get_discovery_movies_random,
+    api_get_discovery_tv_shows_random, api_get_discovery_yt_channels_random,
+};
+use crate::api::{coalesce_media, tmdb_api};
 use crate::components::figures::{FaceFrown, FaceSmile};
 use crate::components::media_card::MediaCard;
 use crate::components::media_selector::{MediaSelector, MediaSelectorOption};
@@ -57,7 +60,7 @@ pub fn discovery_page() -> Html {
     let count = 15_i16; // How many Titles we're requesting from the discovery API.
     let discovery_queue = use_state(|| Vec::<Media>::new());
     let collections = use_state(|| store.collections.clone().unwrap_or_default());
-    let media_selector_option = use_state(|| MediaSelectorOption::All);
+    let media_selector_option = use_state(|| MediaSelectorOption::Movies);
 
     // Feels ridiculous walking these values down scope? Im not understanding something.
     let do_discovery = {
@@ -65,10 +68,12 @@ pub fn discovery_page() -> Html {
         let media_selector_value = media_selector_option.clone();
         let dispatch = dispatch.clone();
         let navigator = navigator.clone();
-        let key = tmdb_key.unwrap_or_else(|| {
-            navigator.push(&router::Route::LoginPage);
-            "".to_string()
-        }).clone();
+        let key = tmdb_key
+            .unwrap_or_else(|| {
+                navigator.push(&router::Route::LoginPage);
+                "".to_string()
+            })
+            .clone();
 
         Callback::from(move |_: MouseEvent| {
             discovery_queue.set(Vec::new()); // reset the discovery queue
@@ -100,14 +105,13 @@ pub fn discovery_page() -> Html {
                     Ok(discovered) => {
                         set_page_loading(false, &dispatch);
 
-                        let out =
-                            match coalesce_media(tk.as_str(), &discovered).await {
-                                Ok(mut media) => media,
-                                Err(e) => {
-                                    console!(format!("Error Coalescing with TMDB: {}", e));
-                                    discovered.to_vec()
-                                }
-                            };
+                        let out = match coalesce_media(tk.as_str(), &discovered).await {
+                            Ok(mut media) => media,
+                            Err(e) => {
+                                console!(format!("Error Coalescing with TMDB: {}", e));
+                                discovered.to_vec()
+                            }
+                        };
 
                         discovery_queue.set(out);
                         set_page_loading(false, &dispatch);
@@ -248,7 +252,7 @@ pub fn discovery_page() -> Html {
                             disabled={store.page_loading}
                         />
                         <MediaSelector
-                            default_option={MediaSelectorOption::All}
+                            default_option={MediaSelectorOption::Movies}
                             on_change={on_change_media_selector}
                             disabled={store.page_loading}
                         />

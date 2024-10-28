@@ -1,7 +1,8 @@
 use crate::model::core::{Movie, TvShow, YTChannel};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug)]
 pub struct RandomMovieResponseData {
     pub movies: Vec<Movie>,
 }
@@ -12,7 +13,7 @@ pub struct RandomMoviesResponse {
     pub data: RandomMovieResponseData,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, JsonSchema, Deserialize)]
 pub struct RandomTvShowsResponseData {
     pub tv_shows: Vec<TvShow>,
 }
@@ -23,7 +24,7 @@ pub struct RandomTvShowsResponse {
     pub data: RandomTvShowsResponseData,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct RandomYTChannelsResponseData {
     pub yt_channels: Vec<YTChannel>,
 }

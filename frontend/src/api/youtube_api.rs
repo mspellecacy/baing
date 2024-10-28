@@ -1,12 +1,14 @@
-use std::error;
+use common::model::core::YTChannel;
 use gloo::console::{console, console_dbg, debug};
 use gloo::net::http::Method;
-use reqwest::header::{ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_ORIGIN, CONTENT_TYPE, REFERRER_POLICY};
+use reqwest::header::{
+    ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_ORIGIN, CONTENT_TYPE, REFERRER_POLICY,
+};
 use serde_json::json;
+use std::error;
 use wasm_bindgen::JsValue;
 use web_sys::RequestMode;
 use yewdux::log;
-use common::model::core::{YTChannel};
 // POST https://www.youtube.com/youtubei/v1/browse?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
 // Content-Type: application/json
 //
@@ -32,27 +34,24 @@ pub async fn api_yt_channel_details(
     let endpoint = "https://www.youtube.com/youtubei/v1/browse";
     let channel_id = yt_channel.channel_id.as_str();
     let body = json!({
-          "context": {
-            "client": {
-              "clientName": "WEB",
-              "clientVersion": "2.20201210.01.00",
-              "originalUrl": "http://youtube.com",
-              "platform": "DESKTOP",
-              "clientFormFactor": "UNKNOWN_FORM_FACTOR",
-              "newVisitorCookie": true
-            }
-          },
-          "browseId": format!("{}", channel_id),
-          "params": "EgZ2aWRlb3M%3D"
-        });
+      "context": {
+        "client": {
+          "clientName": "WEB",
+          "clientVersion": "2.20201210.01.00",
+          "originalUrl": "http://youtube.com",
+          "platform": "DESKTOP",
+          "clientFormFactor": "UNKNOWN_FORM_FACTOR",
+          "newVisitorCookie": true
+        }
+      },
+      "browseId": format!("{}", channel_id),
+      "params": "EgZ2aWRlb3M%3D"
+    });
 
     console!("I shit in your mouth".to_string());
 
     //headers.append("Content-Type", "application/json");
     //headers.append("Access-Control-Request-Headers", "content-type");
-
-
-
 
     // let res = reqwasm::http::Request::post(endpoint)
     //     .mode(RequestMode::NoCors)
@@ -63,13 +62,10 @@ pub async fn api_yt_channel_details(
     let res = client
         .post(endpoint)
         .body(body.to_string())
-        .fetch_mode_no_cors()
-        ;
+        .fetch_mode_no_cors();
 
     let res = match res.build() {
-        Ok(r) => {
-            r
-        }
+        Ok(r) => r,
         Err(e) => {
             console!(format!("{e:?}"));
             panic!("Farts?");

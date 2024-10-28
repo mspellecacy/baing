@@ -21,7 +21,7 @@ fn media_item(media: Media) -> Html {
     let li = match media {
         Media::Movie(movie) => format!("📽️ {movie}"),
         Media::TvShow(tv_show) => format!("📺 {tv_show}"),
-        Media::YTChannel(yt_channel) => format!("▶️ {yt_channel}")
+        Media::YTChannel(yt_channel) => format!("▶️ {yt_channel}"),
     };
 
     html! {<li>{li}</li>}

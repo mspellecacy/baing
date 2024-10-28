@@ -1,8 +1,10 @@
-use std::error;
-use gloo::console::console;
-use common::model::collections::{IsMedia, Media};
-use crate::api::tmdb_api::{api_tmdb_get_search_movie_details, api_tmdb_get_search_tv_show_details};
+use crate::api::tmdb_api::{
+    api_tmdb_get_search_movie_details, api_tmdb_get_search_tv_show_details,
+};
 use crate::api::youtube_api::api_yt_channel_details;
+use common::model::collections::{IsMedia, Media};
+use gloo::console::console;
+use std::error;
 
 pub mod collections_api;
 pub mod discovery_api;
@@ -13,10 +15,7 @@ mod youtube_api;
 //TODO: need to replace this with an env var.
 const API_ROOT: &str = "http://localhost:8000/api";
 
-pub async fn get_media_details(
-    key: &str,
-    media: &Media,
-) -> Result<Media, Box<dyn error::Error>> {
+pub async fn get_media_details(key: &str, media: &Media) -> Result<Media, Box<dyn error::Error>> {
     match media {
         Media::Movie(m) => Ok(api_tmdb_get_search_movie_details(key, &mut m.clone())
             .await?

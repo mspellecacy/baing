@@ -2,10 +2,9 @@ use crate::ai::{ai_movie, ai_tv, ai_youtube};
 use crate::db_helpers::get_user_special_collections;
 use crate::{jwt_auth, AppState};
 use actix_web::{get, web, HttpResponse, Responder};
-use log::debug;
 
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::json;
 
 // Gpt-4, even though told not to, returns json wrapped in markdown ```json ... ```, breaking serde
 fn strip_markdown(in_value: String) -> String {
@@ -31,11 +30,11 @@ async fn get_discovery_movies_rand_n(
 
     let query_type = match !dq.query.is_empty() {
         false => {
-            ai_movie::get_random(&data.chatgpt, count, user_special_collections.to_owned()).await
+            ai_movie::get_random(&data.api_keys, count, user_special_collections.to_owned()).await
         }
         true => {
             ai_movie::get_guided(
-                &data.chatgpt,
+                &data.api_keys,
                 count,
                 user_special_collections.to_owned(),
                 &dq.query,
@@ -46,13 +45,9 @@ async fn get_discovery_movies_rand_n(
 
     let random_movies = match query_type {
         Ok(mut res) => {
-            debug!("AI Response: {res:?}");
-            res = strip_markdown(res);
-            let movies = serde_json::from_str::<Value>(res.clone().as_mut_str()).unwrap();
-
             json!({
                 "status": "success",
-                "data": movies
+                "data": res
             })
         }
         Err(err) => {
@@ -78,10 +73,12 @@ async fn get_discovery_tv_shows_rand_n(
         .await
         .expect("Missing User's Special Collections?");
     let query_type = match !dq.query.is_empty() {
-        false => ai_tv::get_random(&data.chatgpt, count, user_special_collections.to_owned()).await,
+        false => {
+            ai_tv::get_random(&data.api_keys, count, user_special_collections.to_owned()).await
+        }
         true => {
             ai_tv::get_guided(
-                &data.chatgpt,
+                &data.api_keys,
                 count,
                 user_special_collections.to_owned(),
                 &dq.query,
@@ -92,13 +89,9 @@ async fn get_discovery_tv_shows_rand_n(
 
     let random_tv_shows = match query_type {
         Ok(mut res) => {
-            debug!("AI Response: {res:?}");
-            res = strip_markdown(res);
-            let tv_shows = serde_json::from_str::<Value>(res.clone().as_mut_str()).unwrap();
-
             json!({
                 "status": "success",
-                "data": tv_shows
+                "data": res
             })
         }
         Err(err) => {
@@ -124,27 +117,25 @@ async fn get_discovery_yt_channels_rand_n(
         .await
         .expect("Missing User's Special Collections?");
     let query_type = match !dq.query.is_empty() {
-        false => ai_youtube::get_random(&data.chatgpt, count, user_special_collections.to_owned()).await,
+        false => {
+            ai_youtube::get_random(&data.api_keys, count, user_special_collections.to_owned()).await
+        }
         true => {
             ai_youtube::get_guided(
-                &data.chatgpt,
+                &data.api_keys,
                 count,
                 user_special_collections.to_owned(),
                 &dq.query,
             )
-                .await
+            .await
         }
     };
 
     let random_yt_channels = match query_type {
         Ok(mut res) => {
-            debug!("AI Response: {res:?}");
-            res = strip_markdown(res);
-            let yt_channels = serde_json::from_str::<Value>(res.clone().as_mut_str()).unwrap();
-
             json!({
                 "status": "success",
-                "data": yt_channels
+                "data": res
             })
         }
         Err(err) => {
