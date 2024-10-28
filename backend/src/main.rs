@@ -5,29 +5,27 @@ mod handlers;
 mod jwt_auth;
 mod response;
 mod token;
+
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{http::header, middleware, web, App, HttpServer};
+use allms::llm::OpenAIModels;
+use allms::Completions;
 use config::Config;
 use dotenv::dotenv;
-use llm_chain::executor;
-use llm_chain::options::ModelRef;
-use llm_chain_openai::chatgpt::{Executor, Model};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use std::env;
+
+pub struct ApiKeys {
+    anthropic: Option<String>,
+    openai: Option<String>,
+}
 
 pub struct AppState {
     pub db: Pool<Postgres>,
     env: Config,
     redis_client: redis::Client,
-    chatgpt: Executor,
-}
-
-fn get_ai_executor() -> Executor {
-    let model = Model::from("gpt-4".parse().unwrap());
-    let mut opts_builder = llm_chain::options::Options::builder();
-    opts_builder.add_option(llm_chain::options::Opt::Model(ModelRef::from(model)));
-
-    executor!(chatgpt, opts_builder.build()).unwrap()
+    api_keys: ApiKeys,
 }
 
 #[actix_web::main]
@@ -67,10 +65,7 @@ async fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-
-    // Setup the AI/LLM ...
-    let exec = get_ai_executor();
-
+    
     println!("🚀 Server started successfully");
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -87,7 +82,10 @@ async fn main() -> std::io::Result<()> {
                 db: pool.to_owned(),
                 env: config.to_owned(),
                 redis_client: redis_client.to_owned(),
-                chatgpt: exec.to_owned(),
+                api_keys: ApiKeys {
+                    openai: env::var("OPENAI_API_KEY").ok(),
+                    anthropic: env::var("ANTHROPIC_API_KEY").ok(),
+                },
             }))
             .wrap(middleware::Compress::default())
             .service(

@@ -22,9 +22,7 @@ struct LoginUserSchema {
         email(message = "Email is invalid")
     )]
     email: String,
-    #[validate(
-        length(min = 6, message = "Password must be at least 6 characters")
-    )]
+    #[validate(length(min = 6, message = "Password must be at least 6 characters"))]
     password: String,
 }
 

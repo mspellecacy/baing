@@ -1,7 +1,10 @@
 use crate::api::API_ROOT;
 use common::model::collections::{IsMedia, Media};
 use common::model::core::{DiscoveryMeta, TvShow};
-use common::model::discovery::{RandomMoviesResponse, RandomTvShowsResponse, RandomYTChannelsResponse, RandomYTChannelsResponseData};
+use common::model::discovery::{
+    RandomMoviesResponse, RandomTvShowsResponse, RandomYTChannelsResponse,
+    RandomYTChannelsResponseData,
+};
 use gloo::console::console;
 use reqwasm::http;
 use std::ops::Div;
@@ -155,14 +158,12 @@ pub async fn api_get_discovery_tv_shows_random(
     let res_json = response.json::<RandomTvShowsResponse>().await;
 
     match res_json {
-        Ok(res) => {
-            Ok(res
-                .data
-                .tv_shows
-                .into_iter()
-                .map(|c| c.as_media())
-                .collect())
-        }
+        Ok(res) => Ok(res
+            .data
+            .tv_shows
+            .into_iter()
+            .map(|c| c.as_media())
+            .collect()),
         //Ok(res) => Ok(res.data.tv_shows.clone()),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));
@@ -175,8 +176,7 @@ pub async fn api_get_discovery_yt_channels_random(
     count: Option<i16>,
     query: &str,
 ) -> Result<Vec<Media>, String> {
-    let mock_response =
-    r#"{
+    let mock_response = r#"{
         "status": "success",
         "data": {
             "yt_channels": [
@@ -225,9 +225,9 @@ pub async fn api_get_discovery_yt_channels_random(
         "{}/discovery/yt-channels/rand/{}?query={}",
         API_ROOT, title_count, query
     ))
-        .credentials(http::RequestCredentials::Include)
-        .send()
-        .await
+    .credentials(http::RequestCredentials::Include)
+    .send()
+    .await
     {
         Ok(res) => res,
         Err(e) => return Err(format!("Failed to make request: {e}")),
@@ -236,14 +236,12 @@ pub async fn api_get_discovery_yt_channels_random(
     let res_json = response.json::<RandomYTChannelsResponse>().await;
 
     match res_json {
-        Ok(res) => {
-            Ok(res
-                .data
-                .yt_channels
-                .into_iter()
-                .map(|c| c.as_media())
-                .collect())
-        }
+        Ok(res) => Ok(res
+            .data
+            .yt_channels
+            .into_iter()
+            .map(|c| c.as_media())
+            .collect()),
         //Ok(res) => Ok(res.data.tv_shows.clone()),
         Err(e) => {
             console!(format!("Error Parsing Response JSON: {e:?}"));

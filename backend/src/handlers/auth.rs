@@ -156,7 +156,9 @@ async fn login_user_handler(
         .set_ex(
             access_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
+            ((data.env.refresh_token_max_age * 60) as usize)
+                .try_into()
+                .unwrap(),
         )
         .await;
 
@@ -169,7 +171,9 @@ async fn login_user_handler(
         .set_ex(
             refresh_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
+            ((data.env.refresh_token_max_age * 60) as usize)
+                .try_into()
+                .unwrap(),
         )
         .await;
 
@@ -280,7 +284,9 @@ async fn refresh_access_token_handler(
         .set_ex(
             access_token_details.token_uuid.to_string(),
             user.id.to_string(),
-            ((data.env.refresh_token_max_age * 60) as usize).try_into().unwrap(),
+            ((data.env.refresh_token_max_age * 60) as usize)
+                .try_into()
+                .unwrap(),
         )
         .await;
 
@@ -335,7 +341,11 @@ async fn logout_handler(
             }
         };
 
-    let mut redis_client = data.redis_client.get_multiplexed_async_connection().await.unwrap();
+    let mut redis_client = data
+        .redis_client
+        .get_multiplexed_async_connection()
+        .await
+        .unwrap();
     let redis_result: redis::RedisResult<usize> = redis_client
         .del(&[
             refresh_token_details.token_uuid.to_string(),

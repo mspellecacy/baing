@@ -71,7 +71,7 @@ impl From<Media> for CardData {
             Media::Movie(m) => CardData::from(m),
             Media::TvShow(t) => CardData::from(t),
             Media::YTChannel(c) => CardData::from(c),
-            _ => unreachable!("Unsupported media type")
+            _ => unreachable!("Unsupported media type"),
         }
     }
 }

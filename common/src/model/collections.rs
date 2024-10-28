@@ -33,7 +33,7 @@ pub trait IsMedia {
 pub enum Media {
     Movie(Movie),
     TvShow(TvShow),
-    YTChannel(YTChannel)
+    YTChannel(YTChannel),
 }
 
 impl IsMedia for Movie {
@@ -72,11 +72,7 @@ impl Display for TvShow {
 
 impl Display for YTChannel {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{} ({})",
-            self.name, self.language
-        )
+        write!(f, "{} ({})", self.name, self.language)
     }
 }
 
@@ -85,7 +81,7 @@ impl Display for Media {
         match self {
             Media::Movie(m) => write!(f, "{}", m),
             Media::TvShow(t) => write!(f, "{}", t),
-            Media::YTChannel(c) => write!(f, "{}", c)
+            Media::YTChannel(c) => write!(f, "{}", c),
         }
     }
 }

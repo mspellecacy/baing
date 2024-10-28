@@ -1,13 +1,14 @@
 use crate::model::tmdb::{MovieSearchResult, TvSearchResult};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct DiscoveryMeta {
     pub query: String,
     pub reason: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct Movie {
     pub name: String,
     pub year: i32,
@@ -26,7 +27,7 @@ impl Default for Movie {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct MovieDetails {
     pub backdrop_path: Option<String>,
     pub genre_ids: Vec<i64>,
@@ -62,7 +63,7 @@ impl From<MovieSearchResult> for MovieDetails {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct TvShow {
     pub name: String,
     pub first_air_date: String,
@@ -83,7 +84,7 @@ impl Default for TvShow {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct TvShowDetails {
     pub adult: bool,
     pub backdrop_path: Option<String>,
@@ -123,7 +124,7 @@ impl From<TvSearchResult> for TvShowDetails {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct YTChannel {
     pub name: String,
     pub description: String,
@@ -146,7 +147,7 @@ impl Default for YTChannel {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct YTChannelDetails {
     pub backdrop_path: Option<String>,
     pub original_language: String,
