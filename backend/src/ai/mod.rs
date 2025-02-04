@@ -1,14 +1,14 @@
+use crate::ApiKeys;
+use allms::llm::{AnthropicModels, GoogleModels, OpenAIModels};
+use allms::Completions;
+use common::model::collections::{Media, UserCollection};
 use std::collections::HashMap;
 use std::error;
-use allms::Completions;
-use allms::llm::{AnthropicModels, GoogleModels, OpenAIModels};
-use common::model::collections::{Media, UserCollection};
-use crate::ApiKeys;
 
 pub mod ai_movie;
+pub mod ai_online_content;
 pub mod ai_tv;
 pub mod ai_youtube;
-pub mod ai_online_content;
 
 enum AiProviders {
     ANTHROPIC,
@@ -19,7 +19,10 @@ const OPENAI_MODEL: OpenAIModels = OpenAIModels::Gpt4oMini;
 const ANTHROPIC_MODEL: AnthropicModels = AnthropicModels::Claude3_5Sonnet;
 const GOOGLE_MODEL: GoogleModels = GoogleModels::Gemini1_5Pro;
 
-pub async fn get_typed_special_collections(media: Media, collections: Vec<UserCollection>) -> HashMap<String, String> {
+pub async fn get_typed_special_collections(
+    media: Media,
+    collections: Vec<UserCollection>,
+) -> HashMap<String, String> {
     let mut colls = HashMap::new();
 
     colls.insert(
@@ -28,7 +31,7 @@ pub async fn get_typed_special_collections(media: Media, collections: Vec<UserCo
             &collections,
             "thumbsup",
             &media,
-        )
+        ),
     );
 
     colls.insert(
@@ -37,7 +40,7 @@ pub async fn get_typed_special_collections(media: Media, collections: Vec<UserCo
             &collections,
             "thumbsdown",
             &media,
-        )
+        ),
     );
 
     colls.insert(
@@ -46,7 +49,7 @@ pub async fn get_typed_special_collections(media: Media, collections: Vec<UserCo
             &collections,
             "skipped",
             &media,
-        )
+        ),
     );
 
     colls
@@ -84,7 +87,7 @@ where
                 None,
                 None,
             )
-                .function_calling(false);
+            .function_calling(false);
             openai_completions.get_answer::<T>(instructions).await?
         }
     };

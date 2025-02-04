@@ -1,4 +1,3 @@
-
 use crate::api::tmdb_api::{
     api_tmdb_get_search_movie_details, api_tmdb_get_search_tv_show_details,
 };
@@ -16,8 +15,6 @@ mod youtube_api;
 //TODO: need to replace this with an env var.
 const API_ROOT: &str = "http://localhost:8000/api";
 
-
-#[allow(unreachable_patterns)]
 pub async fn get_media_details(key: &str, media: &Media) -> Result<Media, Box<dyn error::Error>> {
     match media {
         Media::Movie(m) => Ok(api_tmdb_get_search_movie_details(key, &mut m.clone())
@@ -28,7 +25,7 @@ pub async fn get_media_details(key: &str, media: &Media) -> Result<Media, Box<dy
             .as_media()),
         Media::YTChannel(c) => Ok(c.as_media()),
         Media::OnlineContent(oc) => Ok(oc.as_media()),
-        _ => unreachable!("Unsupported Media Type")
+        //_ => unreachable!("Unsupported Media Type")
     }
 }
 

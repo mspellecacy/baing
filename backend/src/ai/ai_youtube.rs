@@ -1,9 +1,11 @@
-use crate::ai::{get_with_instructions, AiProviders, ANTHROPIC_MODEL, DEFAULT_PROVIDER, OPENAI_MODEL};
+use crate::ai::{
+    get_with_instructions, AiProviders, ANTHROPIC_MODEL, DEFAULT_PROVIDER, OPENAI_MODEL,
+};
 use crate::ApiKeys;
 use allms::Completions;
 use common::model::collections::{Media, UserCollection};
 use common::model::core::{TvShow, YTChannel};
-use common::model::discovery::{RandomYTChannelsResponseData};
+use common::model::discovery::RandomYTChannelsResponseData;
 use std::error;
 
 pub async fn get_random(

@@ -1,12 +1,12 @@
-use std::convert::Into;
 use crate::ai::{ai_movie, ai_online_content, ai_tv, ai_youtube};
 use crate::db_helpers::get_user_special_collections;
 use crate::{jwt_auth, AppState};
-use actix_web::{get, web, HttpResponse, Responder};
 use actix_web::web::service;
+use actix_web::{get, web, HttpResponse, Responder};
 use log::debug;
 use serde::Deserialize;
 use serde_json::json;
+use std::convert::Into;
 
 // Gpt-4, even though told not to, returns json wrapped in markdown ```json ... ```, breaking serde
 fn strip_markdown(in_value: String) -> String {
@@ -167,7 +167,12 @@ async fn get_discovery_online_content_rand_n(
         .expect("Missing User's Special Collections?");
     let query_type = match !dq.query.is_empty() {
         false => {
-            ai_online_content::get_random(&data.api_keys, count, user_special_collections.to_owned()).await
+            ai_online_content::get_random(
+                &data.api_keys,
+                count,
+                user_special_collections.to_owned(),
+            )
+            .await
         }
         true => {
             ai_online_content::get_guided(
@@ -176,7 +181,7 @@ async fn get_discovery_online_content_rand_n(
                 user_special_collections.to_owned(),
                 &dq.query,
             )
-                .await
+            .await
         }
     };
 

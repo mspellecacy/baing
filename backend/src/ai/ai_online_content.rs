@@ -1,11 +1,16 @@
-use crate::ai::{get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL, DEFAULT_PROVIDER, OPENAI_MODEL};
+use crate::ai::{
+    get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL,
+    DEFAULT_PROVIDER, OPENAI_MODEL,
+};
 use crate::ApiKeys;
 use allms::Completions;
 use common::model::collections::{Media, UserCollection};
 use common::model::core::{OnlineContent, TvShow, YTChannel};
-use common::model::discovery::{RandomOnlineContentResponseData, RandomTvShowsResponseData, RandomYTChannelsResponseData};
-use std::error;
+use common::model::discovery::{
+    RandomOnlineContentResponseData, RandomTvShowsResponseData, RandomYTChannelsResponseData,
+};
 use log::debug;
+use std::error;
 
 pub async fn get_random(
     api_keys: &ApiKeys,
@@ -37,13 +42,12 @@ pub async fn get_random(
     Ok(get_with_instructions(api_keys, &instructions).await?)
 }
 
-
 pub async fn get_guided(
     api_keys: &ApiKeys,
     count: i16,
     special_collections: Vec<UserCollection>,
     prompt: &str,
-)  -> Result<RandomOnlineContentResponseData, Box<dyn error::Error>> {
+) -> Result<RandomOnlineContentResponseData, Box<dyn error::Error>> {
     // Dummy Media to filter against.
     let media_type = Media::OnlineContent(OnlineContent::default());
     let sp_collections = get_typed_special_collections(media_type, special_collections).await;

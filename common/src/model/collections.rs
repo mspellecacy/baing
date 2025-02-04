@@ -56,7 +56,9 @@ impl IsMedia for YTChannel {
 }
 
 impl IsMedia for OnlineContent {
-    fn as_media(&self) -> Media { Media::OnlineContent(self.clone()) }
+    fn as_media(&self) -> Media {
+        Media::OnlineContent(self.clone())
+    }
 }
 
 impl Display for Movie {

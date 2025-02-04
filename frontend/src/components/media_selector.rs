@@ -5,7 +5,7 @@ use yew::{function_component, html, use_state, Callback, Html, Properties};
 pub enum MediaSelectorOption {
     Movies,
     TvShows,
-    YTChannel,
+    //YTChannel,
     OnlineContent,
     All,
     None,

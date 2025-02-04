@@ -1,7 +1,10 @@
 use crate::api::API_ROOT;
 use common::model::collections::{IsMedia, Media};
 use common::model::core::{DiscoveryMeta, TvShow};
-use common::model::discovery::{RandomMoviesResponse, RandomOnlineContentsResponse, RandomTvShowsResponse, RandomYTChannelsResponse, RandomYTChannelsResponseData};
+use common::model::discovery::{
+    RandomMoviesResponse, RandomOnlineContentsResponse, RandomTvShowsResponse,
+    RandomYTChannelsResponse, RandomYTChannelsResponseData,
+};
 use gloo::console::console;
 use reqwasm::http;
 use std::ops::Div;
@@ -247,7 +250,6 @@ pub async fn api_get_discovery_yt_channels_random(
     }
 }
 
-
 pub async fn api_get_discovery_online_content_random(
     count: Option<i16>,
     query: &str,
@@ -257,9 +259,9 @@ pub async fn api_get_discovery_online_content_random(
         "{}/discovery/online-content/rand/{}?query={}",
         API_ROOT, title_count, query
     ))
-        .credentials(http::RequestCredentials::Include)
-        .send()
-        .await
+    .credentials(http::RequestCredentials::Include)
+    .send()
+    .await
     {
         Ok(res) => res,
         Err(e) => return Err(format!("Failed to make request: {e}")),
@@ -280,6 +282,4 @@ pub async fn api_get_discovery_online_content_random(
             Err(format!("Failed to parse API response: {e}"))
         }
     }
-
-
 }

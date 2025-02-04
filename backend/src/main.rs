@@ -65,7 +65,7 @@ async fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    
+
     println!("🚀 Server started successfully");
     HttpServer::new(move || {
         let cors = Cors::default()

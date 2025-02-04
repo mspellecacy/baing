@@ -76,7 +76,6 @@ pub fn hamburger() -> Html {
     }
 }
 
-
 #[function_component(PlayButton)]
 pub fn play_button() -> Html {
     html! {

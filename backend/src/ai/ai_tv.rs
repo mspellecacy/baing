@@ -1,11 +1,14 @@
-use crate::ai::{get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL, DEFAULT_PROVIDER, OPENAI_MODEL};
+use crate::ai::{
+    get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL,
+    DEFAULT_PROVIDER, OPENAI_MODEL,
+};
 use crate::ApiKeys;
 use allms::Completions;
 use common::model::collections::{Media, UserCollection};
 use common::model::core::TvShow;
 use common::model::discovery::{RandomMovieResponseData, RandomTvShowsResponseData};
-use std::error;
 use log::debug;
+use std::error;
 
 pub async fn get_random(
     api_keys: &ApiKeys,

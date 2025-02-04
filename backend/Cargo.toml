@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+common = { path = "../common" }
 actix-cors = "0.7.0"
 actix-web = "4.9.0"
 argon2 = "0.5.3"
@@ -16,13 +17,12 @@ env_logger = "0.11.5"
 futures = "0.3.31"
 futures-util = "0.3.31"
 jsonwebtoken = "9.3.0"
-rand_core = { version = "0.6.4", features = ["std"] }
-redis = { version = "0.27.5", features = ["tokio-comp"] }
-serde = { version = "1.0.213", features = ["derive"] }
-serde_json = { version = "1.0.132", features = ["raw_value"] }
-sqlx = { version = "0.8.2", features = ["runtime-async-std-native-tls", "postgres", "chrono", "uuid"] }
-uuid = { version = "1.11.0", features = ["serde", "v4"] }
-common = { path = "../common" }
-log = { version = "0.4.22", features = [] }
-allms = "0.8.1"
+rand_core = { version = "0.9.0", features = ["std"] }
+redis = { version = "0.28.2", features = ["tokio-comp"] }
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = { version = "1.0.138", features = ["raw_value"] }
+sqlx = { version = "0.8.3", features = ["runtime-async-std-native-tls", "postgres", "chrono", "uuid"] }
+uuid = { version = "1.12.1", features = ["serde", "v4"] }
+log = { version = "0.4.25", features = [] }
+allms = "0.13.0"
 schemars = "0.8.21"

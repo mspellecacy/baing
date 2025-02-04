@@ -1,7 +1,7 @@
-use std::fmt::{Display, Formatter};
 use crate::model::tmdb::{MovieSearchResult, TvSearchResult};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct DiscoveryMeta {
@@ -186,7 +186,6 @@ impl Default for OnlineContent {
         }
     }
 }
-
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
 pub struct OnlineContentDetails {

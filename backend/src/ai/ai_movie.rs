@@ -1,4 +1,7 @@
-use crate::ai::{get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL, DEFAULT_PROVIDER, OPENAI_MODEL};
+use crate::ai::{
+    get_typed_special_collections, get_with_instructions, AiProviders, ANTHROPIC_MODEL,
+    DEFAULT_PROVIDER, OPENAI_MODEL,
+};
 use crate::ApiKeys;
 use allms::{
     llm::{AnthropicModels, GoogleModels, LLMModel, MistralModels, OpenAIModels},
@@ -7,8 +10,8 @@ use allms::{
 use common::model::collections::{Media, UserCollection};
 use common::model::core::Movie;
 use common::model::discovery::RandomMovieResponseData;
-use std::{env, error};
 use log::debug;
+use std::{env, error};
 
 pub async fn get_random(
     api_keys: &ApiKeys,
