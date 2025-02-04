@@ -1,10 +1,7 @@
 use crate::api::API_ROOT;
 use common::model::collections::{IsMedia, Media};
 use common::model::core::{DiscoveryMeta, TvShow};
-use common::model::discovery::{
-    RandomMoviesResponse, RandomTvShowsResponse, RandomYTChannelsResponse,
-    RandomYTChannelsResponseData,
-};
+use common::model::discovery::{RandomMoviesResponse, RandomOnlineContentsResponse, RandomTvShowsResponse, RandomYTChannelsResponse, RandomYTChannelsResponseData};
 use gloo::console::console;
 use reqwasm::http;
 use std::ops::Div;
@@ -248,4 +245,41 @@ pub async fn api_get_discovery_yt_channels_random(
             Err(format!("Failed to parse API response: {e}"))
         }
     }
+}
+
+
+pub async fn api_get_discovery_online_content_random(
+    count: Option<i16>,
+    query: &str,
+) -> Result<Vec<Media>, String> {
+    let title_count = count.unwrap_or(25);
+    let response = match http::Request::get(&format!(
+        "{}/discovery/online-content/rand/{}?query={}",
+        API_ROOT, title_count, query
+    ))
+        .credentials(http::RequestCredentials::Include)
+        .send()
+        .await
+    {
+        Ok(res) => res,
+        Err(e) => return Err(format!("Failed to make request: {e}")),
+    };
+
+    let res_json = response.json::<RandomOnlineContentsResponse>().await;
+
+    match res_json {
+        Ok(res) => Ok(res
+            .data
+            .online_content
+            .into_iter()
+            .map(|c| c.as_media())
+            .collect()),
+        //Ok(res) => Ok(res.data.tv_shows.clone()),
+        Err(e) => {
+            console!(format!("Error Parsing Response JSON: {e:?}"));
+            Err(format!("Failed to parse API response: {e}"))
+        }
+    }
+
+
 }

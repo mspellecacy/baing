@@ -6,6 +6,7 @@ pub enum MediaSelectorOption {
     Movies,
     TvShows,
     YTChannel,
+    OnlineContent,
     All,
     None,
 }
@@ -43,7 +44,7 @@ pub fn media_selector(props: &MediaSelectorProps) -> Html {
                 name="options"
                 aria-label="All"
                 checked={is_default(MediaSelectorOption::All)}
-                disabled={props_clone.disabled}
+                disabled={props.disabled}
                 //onclick={Callback::from(&move |_| update(MediaSelectorOption::Both))}
                 onclick={update_value(MediaSelectorOption::All)}
             />
@@ -53,7 +54,7 @@ pub fn media_selector(props: &MediaSelectorProps) -> Html {
                 name="options"
                 aria-label="Movies"
                 checked={is_default(MediaSelectorOption::Movies)}
-                disabled={props_clone.disabled}
+                disabled={props.disabled}
                 //onclick={Callback::from(&move |_| update(MediaSelectorOption::Movies))}
                 onclick={update_value(MediaSelectorOption::Movies)}
             />
@@ -67,15 +68,25 @@ pub fn media_selector(props: &MediaSelectorProps) -> Html {
                 //onclick={Callback::from(&move |_| update(MediaSelectorOption::TvShows))}
                 onclick={update_value(MediaSelectorOption::TvShows)}
             />
+            // <input
+            //     class="join-item btn grow"
+            //     type="radio"
+            //     name="options"
+            //     aria-label="YT Channels"
+            //     checked={is_default(MediaSelectorOption::YTChannel)}
+            //     disabled={props_clone.disabled}
+            //     //onclick={Callback::from(&move |_| update(MediaSelectorOption::TvShows))}
+            //     onclick={update_value(MediaSelectorOption::YTChannel)}
+            // />
             <input
                 class="join-item btn grow"
                 type="radio"
                 name="options"
-                aria-label="YT Channels"
-                checked={is_default(MediaSelectorOption::YTChannel)}
+                aria-label="Online Content"
+                checked={is_default(MediaSelectorOption::OnlineContent)}
                 disabled={props_clone.disabled}
                 //onclick={Callback::from(&move |_| update(MediaSelectorOption::TvShows))}
-                onclick={update_value(MediaSelectorOption::YTChannel)}
+                onclick={update_value(MediaSelectorOption::OnlineContent)}
             />
         </div>
     }

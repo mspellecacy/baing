@@ -12,7 +12,8 @@ pub async fn api_tmdb_get_search_movie_details(
     let name = movie.name.as_str();
     let year = movie.year;
 
-    let api_call = format!("/search/movie?query={name}&primary_release_year={year}&include_adult=false&language=en-US&api_key={key}");
+    //let api_call = format!("/search/movie?query={name}&primary_release_year={year}&include_adult=false&language=en-US&api_key={key}");
+    let api_call = format!("/search/movie?query={name}&include_adult=false&api_key={key}");
     let response = http::Request::get(&format!("{API_BASE}{api_call}"))
         //.header("Authorization", &*format!("Bearer {key}"))
         .header("accept", "application/json")

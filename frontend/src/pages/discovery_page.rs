@@ -1,8 +1,5 @@
 use crate::api::collections_api::api_patch_user_collection;
-use crate::api::discovery_api::{
-    api_get_discovery_both_random, api_get_discovery_movies_random,
-    api_get_discovery_tv_shows_random, api_get_discovery_yt_channels_random,
-};
+use crate::api::discovery_api::{api_get_discovery_both_random, api_get_discovery_movies_random, api_get_discovery_online_content_random, api_get_discovery_tv_shows_random, api_get_discovery_yt_channels_random};
 use crate::api::{coalesce_media, tmdb_api};
 use crate::components::figures::{FaceFrown, FaceSmile};
 use crate::components::media_card::MediaCard;
@@ -96,6 +93,9 @@ pub fn discovery_page() -> Html {
                     }
                     MediaSelectorOption::YTChannel => {
                         api_get_discovery_yt_channels_random(Some(count), &query).await
+                    }
+                    MediaSelectorOption::OnlineContent  => {
+                        api_get_discovery_online_content_random(Some(count), &query).await
                     }
                     // Both & None
                     _ => api_get_discovery_both_random(Some(count), &query).await,

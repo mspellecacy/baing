@@ -1,4 +1,4 @@
-use crate::model::core::{Movie, TvShow, YTChannel};
+use crate::model::core::{Movie, OnlineContent, TvShow, YTChannel};
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -34,6 +34,7 @@ pub enum Media {
     Movie(Movie),
     TvShow(TvShow),
     YTChannel(YTChannel),
+    OnlineContent(OnlineContent),
 }
 
 impl IsMedia for Movie {
@@ -52,6 +53,10 @@ impl IsMedia for YTChannel {
     fn as_media(&self) -> Media {
         Media::YTChannel(self.clone())
     }
+}
+
+impl IsMedia for OnlineContent {
+    fn as_media(&self) -> Media { Media::OnlineContent(self.clone()) }
 }
 
 impl Display for Movie {
@@ -76,12 +81,19 @@ impl Display for YTChannel {
     }
 }
 
+impl Display for OnlineContent {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} ({})", self.name, self.language)
+    }
+}
+
 impl Display for Media {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Media::Movie(m) => write!(f, "{}", m),
             Media::TvShow(t) => write!(f, "{}", t),
             Media::YTChannel(c) => write!(f, "{}", c),
+            Media::OnlineContent(c) => write!(f, "{}", c),
         }
     }
 }
