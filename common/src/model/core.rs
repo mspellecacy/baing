@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use crate::model::tmdb::{MovieSearchResult, TvSearchResult};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -6,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub struct DiscoveryMeta {
     pub query: String,
     pub reason: String,
+    pub streamers: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
@@ -154,4 +156,56 @@ pub struct YTChannelDetails {
     pub original_title: String,
     pub overview: String,
     pub popularity: f64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
+pub struct OnlineContent {
+    pub name: String,
+    pub description: String,
+    pub url: String,
+    pub language: String,
+    pub bgimage: Option<String>,
+    pub tags: Option<String>,
+    //pub details: Option<OnlineContentDetails>,
+    //pub content_type: OnlineContentType,
+    pub baing_meta: Option<DiscoveryMeta>,
+}
+
+impl Default for OnlineContent {
+    fn default() -> Self {
+        Self {
+            name: "".to_string(),
+            description: "".to_string(),
+            url: "".to_string(),
+            language: "".to_string(),
+            bgimage: None,
+            tags: None,
+            //details: None,
+            //content_type: OnlineContentType::Other,
+            baing_meta: None,
+        }
+    }
+}
+
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
+pub struct OnlineContentDetails {
+    pub long_desc: String,
+    pub popularity: f64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
+pub enum OnlineContentType {
+    Podcast,
+    Blog,
+    Website,
+    Twitch,
+    YouTube,
+    Other,
+}
+
+impl Display for OnlineContentType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }

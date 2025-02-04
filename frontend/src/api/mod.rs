@@ -1,3 +1,4 @@
+
 use crate::api::tmdb_api::{
     api_tmdb_get_search_movie_details, api_tmdb_get_search_tv_show_details,
 };
@@ -15,6 +16,8 @@ mod youtube_api;
 //TODO: need to replace this with an env var.
 const API_ROOT: &str = "http://localhost:8000/api";
 
+
+#[allow(unreachable_patterns)]
 pub async fn get_media_details(key: &str, media: &Media) -> Result<Media, Box<dyn error::Error>> {
     match media {
         Media::Movie(m) => Ok(api_tmdb_get_search_movie_details(key, &mut m.clone())
@@ -23,13 +26,9 @@ pub async fn get_media_details(key: &str, media: &Media) -> Result<Media, Box<dy
         Media::TvShow(t) => Ok(api_tmdb_get_search_tv_show_details(key, &mut t.clone())
             .await?
             .as_media()),
-        // Media::YTChannel(c) => {
-        //     Ok(api_yt_channel_details(&mut c.clone())
-        //         .await?
-        //         .as_media())
-        // },
         Media::YTChannel(c) => Ok(c.as_media()),
-        //_ => unreachable!("Unsupported Media Type")
+        Media::OnlineContent(oc) => Ok(oc.as_media()),
+        _ => unreachable!("Unsupported Media Type")
     }
 }
 
@@ -46,7 +45,7 @@ pub async fn coalesce_media(
         index: usize,
         media: &Media,
     ) -> Result<(usize, Media), Box<dyn error::Error>> {
-        Ok((index, get_media_details(key, media).await?.to_owned()))
+        Ok((index, get_media_details(key, media).await?))
     }
 
     let media_match_up: Vec<_> = media

@@ -22,6 +22,7 @@ fn media_item(media: Media) -> Html {
         Media::Movie(movie) => format!("📽️ {movie}"),
         Media::TvShow(tv_show) => format!("📺 {tv_show}"),
         Media::YTChannel(yt_channel) => format!("▶️ {yt_channel}"),
+        Media::OnlineContent(online_content) => format!("▶️ {online_content}"),
     };
 
     html! {<li>{li}</li>}
